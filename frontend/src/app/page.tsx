@@ -11,12 +11,12 @@ async function getCurrentUser() {
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
-  const res = await fetch(`${BACKEND_URL}/auth/me`, {
+  const res = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });
   if (!res.ok) return null;
-  return res.json() as Promise<{ id: number; email: string; name: string | null }>;
+  return res.json() as Promise<{ id: number; username: string }>;
 }
 
 export default async function Home() {
@@ -36,17 +36,15 @@ export default async function Home() {
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
             <p>
-              <span className="text-muted-foreground">Email: </span>
-              {user.email}
+              <span className="text-muted-foreground">Username: </span>
+              {user.username}
             </p>
-            {user.name && (
-              <p>
-                <span className="text-muted-foreground">Name: </span>
-                {user.name}
-              </p>
-            )}
+            <p>
+              <span className="text-muted-foreground">User ID: </span>
+              {user.id}
+            </p>
             <p className="pt-4 text-muted-foreground">
-              Phase 1 is wired end-to-end. Sidebar nav and feature pages come next.
+              Phase 1 complete! Backend with 15 API endpoints ready. Next: Phase 2 (CSV import & PayPal).
             </p>
           </CardContent>
         </Card>

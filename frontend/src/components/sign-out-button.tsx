@@ -8,7 +8,7 @@ export function SignOutButton() {
   const router = useRouter();
 
   async function onClick() {
-    await fetch("/api/backend/auth/logout", {
+    await fetch("/api/backend/api/v1/auth/logout", {
       method: "POST",
       credentials: "include",
     });

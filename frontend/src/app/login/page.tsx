@@ -29,15 +29,15 @@ export default function LoginPage() {
     setError(null);
     setPending(true);
     try {
-      const res = await fetch("/api/backend/auth/login", {
+      const res = await fetch("/api/backend/api/v1/auth/login/json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username: email, password }),
         credentials: "include",
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        setError(body.detail ?? "Invalid email or password.");
+        setError(body.detail ?? "Invalid username or password.");
         return;
       }
       router.push(callbackUrl);
