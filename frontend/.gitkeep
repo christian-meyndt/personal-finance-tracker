@@ -1,0 +1,20 @@
+# Frontend (Next.js)
+
+The Next.js frontend will be implemented in Phase 4+.
+
+## Planned Stack
+- Next.js 14+ with App Router
+- TypeScript
+- TanStack Query for server state
+- Tailwind CSS for styling
+- Recharts for data visualization
+
+## Planned Features
+- Dashboard with monthly overview
+- Transaction list with filtering
+- Budget tracking UI
+- Category management
+- CSV import interface
+- Analytics and charts
+
+Coming soon!
