@@ -1,7 +1,8 @@
 from typing import Annotated
+from datetime import datetime, timedelta
 import logging
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -10,6 +11,7 @@ from app.db import get_db
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.services.csv_parsers import ALL_PARSERS
+from app.services.paypal import PayPalService
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +127,105 @@ async def import_csv(
 
     return {
         "bank": parser.source_name.replace('csv_', '').upper(),
+        "imported": imported_count,
+        "skipped": skipped_count,
+        "total": imported_count + skipped_count
+    }
+# Add to the end of import_api.py
+
+@router.post("/paypal")
+async def import_paypal(
+    account_id: int = Query(...),
+    days: int = Query(30, ge=1, le=365),
+    current_user: Annotated[User, Depends(get_current_user)] = None,
+    db: Session = Depends(get_db),
+) -> dict:
+    """
+    Import transactions from PayPal API.
+
+    Args:
+        account_id: Target account ID
+        days: Number of days to fetch (default: 30, max: 365)
+
+    Returns:
+        {
+            "imported": 10,
+            "skipped": 5,
+            "total": 15
+        }
+    """
+    logger.info(f"PayPal import started for account {account_id} by user {current_user.username}")
+
+    # Calculate date range
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=days)
+
+    # Fetch from PayPal
+    try:
+        paypal_service = PayPalService()
+        parsed_transactions = await paypal_service.fetch_transactions(
+            account_id=account_id,
+            start_date=start_date,
+            end_date=end_date
+        )
+    except ValueError as e:
+        logger.error(f"PayPal error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"PayPal error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Failed to fetch from PayPal: {str(e)}"
+        )
+
+    if not parsed_transactions:
+        return {
+            "imported": 0,
+            "skipped": 0,
+            "total": 0
+        }
+
+    # Get existing import_hashes for this account
+    existing_hashes = set()
+    stmt = select(Transaction.import_hash).where(
+        Transaction.account_id == account_id,
+        Transaction.import_hash.isnot(None)
+    )
+    result = db.execute(stmt)
+    existing_hashes = {row[0] for row in result}
+
+    # Insert new transactions
+    imported_count = 0
+    skipped_count = 0
+
+    for trans in parsed_transactions:
+        if trans.import_hash in existing_hashes:
+            skipped_count += 1
+            logger.debug(f"Skipping duplicate PayPal transaction: {trans.date} {trans.amount_cents}")
+            continue
+
+        # Create transaction
+        db_transaction = Transaction(
+            account_id=account_id,
+            date=trans.date,
+            amount_cents=trans.amount_cents,
+            description=trans.description,
+            counterparty=trans.counterparty,
+            import_hash=trans.import_hash,
+            source=trans.source,
+        )
+        db.add(db_transaction)
+        existing_hashes.add(trans.import_hash)
+        imported_count += 1
+
+    db.commit()
+
+    logger.info(f"PayPal import complete: {imported_count} imported, {skipped_count} skipped")
+
+    return {
         "imported": imported_count,
         "skipped": skipped_count,
         "total": imported_count + skipped_count
