@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { NavHeader } from "@/components/nav-header";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
@@ -43,17 +44,11 @@ export default async function TransactionsPage() {
   }
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen">
+      <NavHeader />
+      <main className="p-8">
+        <div className="mx-auto max-w-7xl space-y-6">
           <h1 className="text-3xl font-bold">Transactions</h1>
-          <a
-            href="/import"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Import CSV
-          </a>
-        </div>
 
         <Card>
           <CardHeader>
@@ -119,7 +114,8 @@ export default async function TransactionsPage() {
         <div className="text-sm text-muted-foreground">
           Showing {transactions.length} transactions
         </div>
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }

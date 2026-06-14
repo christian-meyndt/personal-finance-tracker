@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,11 +56,16 @@ export default function ImportPage() {
   return (
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-2xl space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Import Transactions</h1>
-          <p className="text-muted-foreground mt-2">
-            Upload a CSV file from your bank (DKB, Hanseatic Bank, or Openbank)
-          </p>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-muted-foreground hover:text-foreground">
+            ← Back
+          </Link>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold">Import Transactions</h1>
+            <p className="text-muted-foreground mt-2">
+              Upload a CSV file from your bank (DKB, Hanseatic Bank, or Openbank)
+            </p>
+          </div>
         </div>
 
         <Card>
