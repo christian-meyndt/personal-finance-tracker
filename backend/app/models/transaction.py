@@ -16,7 +16,7 @@ class Transaction(Base):
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     import_hash = Column(String, unique=True, index=True)
     source = Column(String)  # csv_dkb | csv_hanseatic | csv_openbank | paypal | manual
-    created_at = Column(DateTime, default=func.utc_timestamp())
+    created_at = Column(DateTime, default=func.now())
 
     account = relationship("Account", back_populates="transactions")
     category = relationship("Category", back_populates="transactions")
