@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignOutButton } from "@/components/sign-out-button";
@@ -32,31 +33,35 @@ export default async function Home() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => window.location.href = '/transactions'}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                📊 Transactions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                View all imported transactions, filter by date and category
-              </p>
-            </CardContent>
-          </Card>
+          <Link href="/transactions">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  📊 Transactions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  View all imported transactions, filter by date and category
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => window.location.href = '/import'}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                📥 Import CSV
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Upload transactions from DKB, Hanseatic Bank, or Openbank
-              </p>
-            </CardContent>
-          </Card>
+          <Link href="/import">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  📥 Import CSV
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Upload transactions from DKB, Hanseatic Bank, or Openbank
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <Card>
