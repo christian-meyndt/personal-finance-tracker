@@ -1,0 +1,8 @@
+Kontonummer:;DE12345678901234567890 / Girokonto
+
+Buchungsdatum;Wertstellung;Status;Zahlungspflichtige*r;Zahlungsempfänger*in;Verwendungszweck;Umsatztyp;IBAN;Betrag (€);Gläubiger-ID;Mandatsreferenz;Kundenreferenz
+15.05.2026;15.05.2026;Gebucht;Max Mustermann;REWE Markt GmbH;Lebensmittel Einkauf;Lastschrift;DE98765432109876543210;-42,50;DE12ZZZ00000123456;;
+14.05.2026;14.05.2026;Gebucht;Max Mustermann;Stadtwerke München;Strom 04/2026;Lastschrift;DE11223344556677889900;-85,30;DE13ZZZ00000987654;;
+13.05.2026;13.05.2026;Gebucht;Arbeitgeber GmbH;Max Mustermann;Gehalt Mai 2026;Überweisung;DE12345678901234567890;2.850,00;;;
+12.05.2026;12.05.2026;Gebucht;Max Mustermann;EDEKA Südbayern;Wocheneinkauf;Lastschrift;DE99887766554433221100;-67,80;DE14ZZZ00000246813;;
+11.05.2026;11.05.2026;Gebucht;Max Mustermann;Spotify AB;Spotify Premium Mai;Lastschrift;SE1234567890123456789012;-10,99;SE15ZZZ00001234567;;
