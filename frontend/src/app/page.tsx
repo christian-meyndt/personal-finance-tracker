@@ -32,7 +32,7 @@ export default async function Home() {
           <SignOutButton />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Link href="/transactions">
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
@@ -48,16 +48,31 @@ export default async function Home() {
             </Card>
           </Link>
 
-          <Link href="/import">
+          <Link href="/categories">
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  📥 Import CSV
+                  🏷️ Categories
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Upload transactions from DKB, Hanseatic Bank, or Openbank
+                  View and manage transaction categories and rules
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/import">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  📥 Import
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Upload CSV or sync from PayPal
                 </p>
               </CardContent>
             </Card>
@@ -70,14 +85,16 @@ export default async function Home() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Phase 3 complete! You can now import CSV files and view transactions.
+              Phase 6 in progress! Auto-categorization with rules and AI.
             </p>
             <div className="pt-2 space-y-1">
               <p className="font-medium">✅ Available Features:</p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>CSV import (DKB format)</li>
-                <li>Transaction list with details</li>
-                <li>Automatic deduplication</li>
+                <li>CSV import (DKB, Hanseatic, Openbank)</li>
+                <li>PayPal API sync</li>
+                <li>Transaction list with categories</li>
+                <li>Auto-categorization with rules</li>
+                <li>AI categorization fallback (optional)</li>
               </ul>
             </div>
           </CardContent>

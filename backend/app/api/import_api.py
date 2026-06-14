@@ -12,6 +12,7 @@ from app.models.transaction import Transaction
 from app.models.user import User
 from app.services.csv_parsers import ALL_PARSERS
 from app.services.paypal import PayPalService
+from app.services.categorization import CategorizationService
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +101,7 @@ async def import_csv(
     # Insert new transactions
     imported_count = 0
     skipped_count = 0
+    new_transactions = []
 
     for trans in parsed_transactions:
         if trans.import_hash in existing_hashes:
@@ -119,9 +121,23 @@ async def import_csv(
         )
         db.add(db_transaction)
         existing_hashes.add(trans.import_hash)  # Track in this session too
+        new_transactions.append(db_transaction)
         imported_count += 1
 
     db.commit()
+
+    # Auto-categorize new transactions
+    if new_transactions:
+        categorization_service = CategorizationService(db)
+        categorized = categorization_service.categorize_batch(new_transactions)
+
+        # Apply categories
+        for txn in new_transactions:
+            if txn.id in categorized:
+                txn.category_id = categorized[txn.id]
+
+        db.commit()
+        logger.info(f"Auto-categorized {len(categorized)}/{len(new_transactions)} transactions")
 
     logger.info(f"Import complete: {imported_count} imported, {skipped_count} skipped")
 
@@ -200,6 +216,7 @@ async def import_paypal(
     # Insert new transactions
     imported_count = 0
     skipped_count = 0
+    new_transactions = []
 
     for trans in parsed_transactions:
         if trans.import_hash in existing_hashes:
@@ -219,9 +236,23 @@ async def import_paypal(
         )
         db.add(db_transaction)
         existing_hashes.add(trans.import_hash)
+        new_transactions.append(db_transaction)
         imported_count += 1
 
     db.commit()
+
+    # Auto-categorize new transactions
+    if new_transactions:
+        categorization_service = CategorizationService(db)
+        categorized = categorization_service.categorize_batch(new_transactions)
+
+        # Apply categories
+        for txn in new_transactions:
+            if txn.id in categorized:
+                txn.category_id = categorized[txn.id]
+
+        db.commit()
+        logger.info(f"Auto-categorized {len(categorized)}/{len(new_transactions)} PayPal transactions")
 
     logger.info(f"PayPal import complete: {imported_count} imported, {skipped_count} skipped")
 

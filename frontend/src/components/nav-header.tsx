@@ -14,6 +14,9 @@ export function NavHeader() {
               <Link href="/transactions" className="text-muted-foreground hover:text-foreground">
                 Transactions
               </Link>
+              <Link href="/categories" className="text-muted-foreground hover:text-foreground">
+                Categories
+              </Link>
               <Link href="/import" className="text-muted-foreground hover:text-foreground">
                 Import
               </Link>
