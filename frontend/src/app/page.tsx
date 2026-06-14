@@ -32,7 +32,22 @@ export default async function Home() {
           <SignOutButton />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link href="/dashboard">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  📈 Dashboard
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Overview of income, expenses, and spending by category
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
           <Link href="/transactions">
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
@@ -85,16 +100,16 @@ export default async function Home() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Phase 6 in progress! Auto-categorization with rules and AI.
+              Phase 7 in progress! Dashboard and analytics.
             </p>
             <div className="pt-2 space-y-1">
               <p className="font-medium">✅ Available Features:</p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Dashboard with income/expense summary</li>
+                <li>Top spending categories with charts</li>
                 <li>CSV import (DKB, Hanseatic, Openbank)</li>
                 <li>PayPal API sync</li>
-                <li>Transaction list with categories</li>
-                <li>Auto-categorization with rules</li>
-                <li>AI categorization fallback (optional)</li>
+                <li>Auto-categorization with rules + AI</li>
               </ul>
             </div>
           </CardContent>

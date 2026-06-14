@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import accounts, auth, budgets, categories, import_api, rules, transactions
+from app.api import accounts, analytics, auth, budgets, categories, import_api, rules, transactions
 from app.config import settings
 from app.db import Base, engine
 from app.init_db import init_database
@@ -34,6 +34,7 @@ app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(budgets.router, prefix="/api/v1")
 app.include_router(rules.router, prefix="/api/v1")
 app.include_router(import_api.router, prefix="/api/v1")
+app.include_router(analytics.router, prefix="/api/v1")
 
 
 @app.on_event("startup")

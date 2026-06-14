@@ -11,11 +11,17 @@ export function NavHeader() {
               Personal Finance Tracker
             </Link>
             <nav className="flex gap-4 text-sm">
+              <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
+                Dashboard
+              </Link>
               <Link href="/transactions" className="text-muted-foreground hover:text-foreground">
                 Transactions
               </Link>
               <Link href="/categories" className="text-muted-foreground hover:text-foreground">
                 Categories
+              </Link>
+              <Link href="/budgets" className="text-muted-foreground hover:text-foreground">
+                Budgets
               </Link>
               <Link href="/import" className="text-muted-foreground hover:text-foreground">
                 Import
