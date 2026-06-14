@@ -25,27 +25,56 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Personal Finance Tracker</h1>
           <SignOutButton />
         </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => window.location.href = '/transactions'}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                📊 Transactions
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                View all imported transactions, filter by date and category
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => window.location.href = '/import'}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                📥 Import CSV
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Upload transactions from DKB, Hanseatic Bank, or Openbank
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         <Card>
           <CardHeader>
-            <CardTitle>Signed in</CardTitle>
+            <CardTitle>Welcome, {user.username}!</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            <p>
-              <span className="text-muted-foreground">Username: </span>
-              {user.username}
+          <CardContent className="space-y-2 text-sm">
+            <p className="text-muted-foreground">
+              Phase 3 complete! You can now import CSV files and view transactions.
             </p>
-            <p>
-              <span className="text-muted-foreground">User ID: </span>
-              {user.id}
-            </p>
-            <p className="pt-4 text-muted-foreground">
-              Phase 1 complete! Backend with 15 API endpoints ready. Next: Phase 2 (CSV import & PayPal).
-            </p>
+            <div className="pt-2 space-y-1">
+              <p className="font-medium">✅ Available Features:</p>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>CSV import (DKB format)</li>
+                <li>Transaction list with details</li>
+                <li>Automatic deduplication</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       </div>
