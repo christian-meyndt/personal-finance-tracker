@@ -1,47 +1,92 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { NavHeader } from "@/components/nav-header";
 
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
+export default function CategoriesPage() {
+  const router = useRouter();
+  const [categories, setCategories] = useState<any[]>([]);
+  const [uncategorized, setUncategorized] = useState<any[]>([]);
+  const [categorizing, setCategorizing] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-async function getCategories() {
-  const cookieHeader = cookies()
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const res = await fetch(`${BACKEND_URL}/api/v1/categories`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
+  async function loadData() {
+    setLoading(true);
+    try {
+      // Load categories
+      const catRes = await fetch("/api/backend/api/v1/categories", {
+        credentials: "include",
+      });
+      if (catRes.ok) {
+        const catData = await catRes.json();
+        setCategories(catData);
+      }
 
-  if (!res.ok) return null;
-  return res.json();
-}
+      // Load uncategorized transactions
+      const uncatRes = await fetch("/api/backend/api/v1/transactions/uncategorized", {
+        credentials: "include",
+      });
+      if (uncatRes.ok) {
+        const uncatData = await uncatRes.json();
+        setUncategorized(uncatData);
+      }
+    } catch (err) {
+      console.error("Failed to load data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-async function getUncategorizedCount() {
-  const cookieHeader = cookies()
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  async function handleAutoCategorize() {
+    setCategorizing(true);
+    setResult(null);
 
-  const res = await fetch(`${BACKEND_URL}/api/v1/transactions/uncategorized`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
+    try {
+      const res = await fetch("/api/backend/api/v1/transactions/categorize-all", {
+        method: "POST",
+        credentials: "include",
+      });
 
-  if (!res.ok) return 0;
-  const data = await res.json();
-  return data.length;
-}
+      if (!res.ok) {
+        throw new Error("Categorization failed");
+      }
 
-export default async function CategoriesPage() {
-  const categories = await getCategories();
-  const uncategorizedCount = await getUncategorizedCount();
+      const data = await res.json();
+      setResult(data);
 
-  if (!categories) {
-    redirect("/login");
+      // Reload data after 1 second
+      setTimeout(() => {
+        loadData();
+        setResult(null);
+      }, 2000);
+    } catch (err: any) {
+      console.error("Categorization error:", err);
+      setResult({ error: err.message });
+    } finally {
+      setCategorizing(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <NavHeader />
+        <main className="p-8">
+          <div className="mx-auto max-w-7xl">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -51,16 +96,112 @@ export default async function CategoriesPage() {
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Categories</h1>
-            {uncategorizedCount > 0 && (
-              <span className="rounded-full bg-yellow-100 dark:bg-yellow-900 px-3 py-1 text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                {uncategorizedCount} uncategorized
-              </span>
+            {uncategorized.length > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-yellow-100 dark:bg-yellow-900 px-3 py-1 text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  {uncategorized.length} uncategorized
+                </span>
+                <Button onClick={handleAutoCategorize} disabled={categorizing}>
+                  {categorizing ? "Categorizing..." : "Auto-Categorize All"}
+                </Button>
+              </div>
             )}
           </div>
 
+          {result && !result.error && (
+            <div className="rounded-md bg-green-50 dark:bg-green-950 p-4">
+              <p className="font-medium text-green-900 dark:text-green-100">
+                Categorization Complete! 🎉
+              </p>
+              <p className="text-sm text-green-800 dark:text-green-200">
+                Processed: {result.processed}, Categorized: {result.categorized}
+              </p>
+            </div>
+          )}
+
+          {result?.error && (
+            <div className="rounded-md bg-red-50 dark:bg-red-950 p-4">
+              <p className="text-sm text-red-800 dark:text-red-200">
+                {result.error}
+              </p>
+            </div>
+          )}
+
+          {uncategorized.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Uncategorized Transactions</CardTitle>
+                <CardDescription>
+                  These transactions haven't been assigned a category yet.
+                  Click "Auto-Categorize All" to use rules and AI, or assign categories manually in the Transactions page.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {uncategorized.slice(0, 10).map((txn: any) => {
+                    const amount = txn.amount_cents / 100;
+                    const isExpense = amount < 0;
+                    return (
+                      <div
+                        key={txn.id}
+                        className="flex items-center justify-between border-b pb-2 last:border-b-0"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {txn.counterparty || txn.description || "Unknown"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {txn.date} • {txn.source || "manual"}
+                          </p>
+                        </div>
+                        <div
+                          className={`text-sm font-mono ${
+                            isExpense ? "text-red-600" : "text-green-600"
+                          }`}
+                        >
+                          {amount.toFixed(2)} €
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {uncategorized.length > 10 && (
+                    <p className="text-xs text-muted-foreground text-center pt-2">
+                      ... and {uncategorized.length - 10} more
+                    </p>
+                  )}
+                </div>
+                <div className="mt-4">
+                  <Link href="/transactions">
+                    <Button variant="outline" size="sm" className="w-full">
+                      View All Transactions
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {uncategorized.length === 0 && (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center">
+                  <p className="text-lg font-medium text-green-600 dark:text-green-400">
+                    ✓ All transactions are categorized!
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Great job! All your transactions have been assigned to categories.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
-              <CardTitle>All Categories</CardTitle>
+              <CardTitle>All Categories ({categories.length})</CardTitle>
+              <CardDescription>
+                Categories are used to organize your transactions and track spending by type.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {categories.length === 0 ? (
@@ -107,22 +248,40 @@ export default async function CategoriesPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Categorization Rules</CardTitle>
+              <CardTitle>How Categorization Works</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Transactions are automatically categorized using pattern matching rules.
-                When a transaction matches a rule, it's assigned to the corresponding category.
-              </p>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">17 active rules</span>
-                  <span className="text-muted-foreground">
-                    for common merchants and patterns
-                  </span>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <p className="font-medium mb-2">1. Rule-Based Matching</p>
+                  <p className="text-muted-foreground">
+                    Transactions are automatically categorized using pattern matching rules.
+                    For example: Amazon → Shopping, Netflix → Subscriptions, Lidl → Groceries.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Currently active: 17 rules for common merchants
+                  </p>
                 </div>
-                <div className="text-muted-foreground">
-                  Examples: Amazon → Shopping, Netflix → Subscriptions, Lidl → Groceries
+
+                <div>
+                  <p className="font-medium mb-2">2. AI Fallback (Optional)</p>
+                  <p className="text-muted-foreground">
+                    If no rule matches and you have configured the Anthropic API key,
+                    Claude Haiku will intelligently categorize the transaction based on
+                    the merchant name and description.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    AI categorization requires ANTHROPIC_API_KEY in backend/.env
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-2">3. Manual Assignment</p>
+                  <p className="text-muted-foreground">
+                    You can manually assign categories to transactions on the Transactions page.
+                    Future transactions from the same merchant can automatically use this category
+                    by creating a rule.
+                  </p>
                 </div>
               </div>
             </CardContent>
