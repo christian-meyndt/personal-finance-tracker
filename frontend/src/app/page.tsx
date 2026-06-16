@@ -32,7 +32,7 @@ export default async function Home() {
           <SignOutButton />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Link href="/dashboard">
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
@@ -48,11 +48,26 @@ export default async function Home() {
             </Card>
           </Link>
 
+          <Link href="/analytics">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  📊 Analytics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Interactive charts and spending insights
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
           <Link href="/transactions">
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  📊 Transactions
+                  💳 Transactions
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -73,6 +88,21 @@ export default async function Home() {
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   View and manage transaction categories and rules
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/budgets">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🎯 Budgets
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Set spending limits and track budget progress
                 </p>
               </CardContent>
             </Card>
@@ -100,15 +130,15 @@ export default async function Home() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Phase 7 in progress! Dashboard and analytics.
+              Phase 8 complete! Interactive charts and analytics.
             </p>
             <div className="pt-2 space-y-1">
               <p className="font-medium">✅ Available Features:</p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>Dashboard with income/expense summary</li>
-                <li>Top spending categories with charts</li>
-                <li>CSV import (DKB, Hanseatic, Openbank)</li>
-                <li>PayPal API sync</li>
+                <li>Dashboard with financial summary</li>
+                <li>Interactive charts (line, pie, bar)</li>
+                <li>Budget tracking with visual progress</li>
+                <li>CSV import (DKB, Hanseatic, Openbank) + PayPal</li>
                 <li>Auto-categorization with rules + AI</li>
               </ul>
             </div>

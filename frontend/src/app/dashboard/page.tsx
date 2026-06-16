@@ -248,7 +248,17 @@ export default function DashboardPage() {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 md:grid-cols-4">
+              <div className="grid gap-3 md:grid-cols-5">
+                <Link
+                  href="/analytics"
+                  className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
+                >
+                  <div className="text-2xl mb-2">📊</div>
+                  <div className="text-sm font-medium">Analytics</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    View charts
+                  </div>
+                </Link>
                 <Link
                   href="/import"
                   className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
@@ -263,7 +273,7 @@ export default function DashboardPage() {
                   href="/transactions"
                   className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
                 >
-                  <div className="text-2xl mb-2">📊</div>
+                  <div className="text-2xl mb-2">💳</div>
                   <div className="text-sm font-medium">Transactions</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     View all
