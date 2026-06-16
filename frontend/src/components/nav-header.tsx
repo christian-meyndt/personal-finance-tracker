@@ -8,20 +8,20 @@ export function NavHeader() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="text-lg font-semibold hover:text-primary">
-              Personal Finance Tracker
+              Finanztracker
             </Link>
             <nav className="flex gap-4 text-sm">
               <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
                 Dashboard
               </Link>
               <Link href="/analytics" className="text-muted-foreground hover:text-foreground">
-                Analytics
+                Analysen
               </Link>
               <Link href="/transactions" className="text-muted-foreground hover:text-foreground">
-                Transactions
+                Transaktionen
               </Link>
               <Link href="/categories" className="text-muted-foreground hover:text-foreground">
-                Categories
+                Kategorien
               </Link>
               <Link href="/budgets" className="text-muted-foreground hover:text-foreground">
                 Budgets

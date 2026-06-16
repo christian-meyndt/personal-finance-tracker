@@ -57,7 +57,7 @@ export default function DashboardPage() {
         <NavHeader />
         <main className="p-8">
           <div className="mx-auto max-w-7xl">
-            <p className="text-muted-foreground">Loading dashboard...</p>
+            <p className="text-muted-foreground">Dashboard wird geladen...</p>
           </div>
         </main>
       </div>
@@ -76,7 +76,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-sm text-muted-foreground">
-              All time summary
+              Gesamtübersicht
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+                <CardTitle className="text-sm font-medium">Gesamteinnahmen</CardTitle>
                 <span className="text-2xl">💰</span>
               </CardHeader>
               <CardContent>
@@ -92,14 +92,14 @@ export default function DashboardPage() {
                   +{income.toFixed(2)} €
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {summary?.transaction_count || 0} transactions
+                  {summary?.transaction_count || 0} Transaktionen
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                <CardTitle className="text-sm font-medium">Gesamtausgaben</CardTitle>
                 <span className="text-2xl">💸</span>
               </CardHeader>
               <CardContent>
@@ -107,14 +107,14 @@ export default function DashboardPage() {
                   -{expenses.toFixed(2)} €
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Across all categories
+                  Über alle Kategorien
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Net Balance</CardTitle>
+                <CardTitle className="text-sm font-medium">Nettobilanz</CardTitle>
                 <span className="text-2xl">📊</span>
               </CardHeader>
               <CardContent>
@@ -122,7 +122,7 @@ export default function DashboardPage() {
                   {net >= 0 ? '+' : ''}{net.toFixed(2)} €
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Income minus expenses
+                  Einnahmen minus Ausgaben
                 </p>
               </CardContent>
             </Card>
@@ -133,16 +133,16 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Top Spending Categories</CardTitle>
+                  <CardTitle>Top-Ausgabenkategorien</CardTitle>
                   <Link href="/categories" className="text-xs text-muted-foreground hover:text-foreground">
-                    View all →
+                    Alle anzeigen →
                   </Link>
                 </div>
               </CardHeader>
               <CardContent>
                 {byCategory.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No expenses yet
+                    Noch keine Ausgaben
                   </p>
                 ) : (
                   <div className="space-y-4">
@@ -182,16 +182,16 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Recent Transactions</CardTitle>
+                  <CardTitle>Letzte Transaktionen</CardTitle>
                   <Link href="/transactions" className="text-xs text-muted-foreground hover:text-foreground">
-                    View all →
+                    Alle anzeigen →
                   </Link>
                 </div>
               </CardHeader>
               <CardContent>
                 {recent.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No transactions yet
+                    Noch keine Transaktionen
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -245,7 +245,7 @@ export default function DashboardPage() {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle>Schnellzugriff</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 md:grid-cols-5">
@@ -254,9 +254,9 @@ export default function DashboardPage() {
                   className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
                 >
                   <div className="text-2xl mb-2">📊</div>
-                  <div className="text-sm font-medium">Analytics</div>
+                  <div className="text-sm font-medium">Analysen</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    View charts
+                    Diagramme anzeigen
                   </div>
                 </Link>
                 <Link
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                   <div className="text-2xl mb-2">📥</div>
                   <div className="text-sm font-medium">Import</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    Add transactions
+                    Transaktionen hinzufügen
                   </div>
                 </Link>
                 <Link
@@ -274,9 +274,9 @@ export default function DashboardPage() {
                   className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
                 >
                   <div className="text-2xl mb-2">💳</div>
-                  <div className="text-sm font-medium">Transactions</div>
+                  <div className="text-sm font-medium">Transaktionen</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    View all
+                    Alle anzeigen
                   </div>
                 </Link>
                 <Link
@@ -284,9 +284,9 @@ export default function DashboardPage() {
                   className="rounded-lg border p-4 hover:bg-muted/50 transition-colors text-center"
                 >
                   <div className="text-2xl mb-2">🏷️</div>
-                  <div className="text-sm font-medium">Categories</div>
+                  <div className="text-sm font-medium">Kategorien</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    Manage rules
+                    Regeln verwalten
                   </div>
                 </Link>
                 <Link
@@ -296,7 +296,7 @@ export default function DashboardPage() {
                   <div className="text-2xl mb-2">🎯</div>
                   <div className="text-sm font-medium">Budgets</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    Track spending
+                    Ausgaben verfolgen
                   </div>
                 </Link>
               </div>

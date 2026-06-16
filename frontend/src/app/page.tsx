@@ -29,7 +29,7 @@ export default async function Home() {
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Personal Finance Tracker</h1>
+          <h1 className="text-2xl font-semibold">Persönlicher Finanztracker</h1>
           <SignOutButton />
         </div>
 
@@ -43,7 +43,7 @@ export default async function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Overview of income, expenses, and spending by category
+                  Übersicht über Einnahmen, Ausgaben und Ausgaben nach Kategorie
                 </p>
               </CardContent>
             </Card>
@@ -53,12 +53,12 @@ export default async function Home() {
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  📊 Analytics
+                  📊 Analysen
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Interactive charts and spending insights
+                  Interaktive Diagramme und Ausgabeneinblicke
                 </p>
               </CardContent>
             </Card>
@@ -68,12 +68,12 @@ export default async function Home() {
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  💳 Transactions
+                  💳 Transaktionen
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  View all imported transactions, filter by date and category
+                  Alle importierten Transaktionen anzeigen, nach Datum und Kategorie filtern
                 </p>
               </CardContent>
             </Card>
@@ -83,12 +83,12 @@ export default async function Home() {
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  🏷️ Categories
+                  🏷️ Kategorien
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  View and manage transaction categories and rules
+                  Transaktionskategorien und Regeln anzeigen und verwalten
                 </p>
               </CardContent>
             </Card>
@@ -103,7 +103,7 @@ export default async function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Set spending limits and track budget progress
+                  Ausgabenlimits festlegen und Budgetfortschritt verfolgen
                 </p>
               </CardContent>
             </Card>
@@ -118,7 +118,7 @@ export default async function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Upload CSV or sync from PayPal
+                  CSV hochladen oder von PayPal synchronisieren
                 </p>
               </CardContent>
             </Card>
@@ -127,20 +127,20 @@ export default async function Home() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Welcome, {user.username}!</CardTitle>
+            <CardTitle>Willkommen, {user.username}!</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Phase 8 complete! Interactive charts and analytics.
+              Phase 8 abgeschlossen! Interaktive Diagramme und Analysen.
             </p>
             <div className="pt-2 space-y-1">
-              <p className="font-medium">✅ Available Features:</p>
+              <p className="font-medium">✅ Verfügbare Funktionen:</p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>Dashboard with financial summary</li>
-                <li>Interactive charts (line, pie, bar)</li>
-                <li>Budget tracking with visual progress</li>
-                <li>CSV import (DKB, Hanseatic, Openbank) + PayPal</li>
-                <li>Auto-categorization with rules + AI</li>
+                <li>Dashboard mit Finanzübersicht</li>
+                <li>Interaktive Diagramme (Linien, Kreis, Balken)</li>
+                <li>Budget-Tracking mit visuellem Fortschritt</li>
+                <li>CSV-Import (DKB, Hanseatic, Openbank) + PayPal</li>
+                <li>Auto-Kategorisierung mit Regeln + KI</li>
               </ul>
             </div>
           </CardContent>

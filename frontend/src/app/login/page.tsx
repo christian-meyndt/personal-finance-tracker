@@ -53,13 +53,13 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Personal Finance Tracker</CardDescription>
+          <CardTitle>Anmelden</CardTitle>
+          <CardDescription>Persönlicher Finanztracker</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Benutzername</Label>
               <Input
                 id="username"
                 type="text"
@@ -70,7 +70,7 @@ function LoginForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Passwort</Label>
               <Input
                 id="password"
                 type="password"
@@ -86,7 +86,7 @@ function LoginForm() {
               </p>
             )}
             <Button type="submit" className="w-full" disabled={pending}>
-              {pending ? "Signing in..." : "Sign in"}
+              {pending ? "Anmelden..." : "Anmelden"}
             </Button>
           </form>
         </CardContent>
@@ -97,7 +97,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Lädt...</div>}>
       <LoginForm />
     </Suspense>
   );
