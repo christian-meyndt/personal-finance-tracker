@@ -6,7 +6,8 @@ import { NavHeader } from "@/components/nav-header";
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
 async function getTransactions() {
-  const cookieHeader = cookies()
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
@@ -21,7 +22,8 @@ async function getTransactions() {
 }
 
 async function getCategories() {
-  const cookieHeader = cookies()
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");

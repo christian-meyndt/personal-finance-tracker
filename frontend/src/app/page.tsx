@@ -8,7 +8,8 @@ import { SignOutButton } from "@/components/sign-out-button";
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
 async function getCurrentUser() {
-  const cookieHeader = cookies()
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
