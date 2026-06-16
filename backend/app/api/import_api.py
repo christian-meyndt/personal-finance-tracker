@@ -152,7 +152,9 @@ async def import_csv(
 @router.post("/paypal")
 async def import_paypal(
     account_id: int = Query(...),
-    days: int = Query(30, ge=1, le=365),
+    days: int | None = Query(None, ge=1, le=365),
+    start_date: str | None = Query(None),
+    end_date: str | None = Query(None),
     current_user: Annotated[User, Depends(get_current_user)] = None,
     db: Session = Depends(get_db),
 ) -> dict:
@@ -161,7 +163,9 @@ async def import_paypal(
 
     Args:
         account_id: Target account ID
-        days: Number of days to fetch (default: 30, max: 365)
+        days: Number of days to fetch (default: 30, max: 365) - used if start_date/end_date not provided
+        start_date: Start date in YYYY-MM-DD format (optional)
+        end_date: End date in YYYY-MM-DD format (optional, defaults to today)
 
     Returns:
         {
@@ -173,16 +177,32 @@ async def import_paypal(
     logger.info(f"PayPal import started for account {account_id} by user {current_user.username}")
 
     # Calculate date range
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=days)
+    if start_date or end_date:
+        # Use provided dates
+        try:
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d") if end_date else datetime.utcnow()
+            if start_date:
+                start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            else:
+                # If only end_date provided, default to 30 days before end_date
+                start_dt = end_dt - timedelta(days=30)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid date format. Use YYYY-MM-DD"
+            )
+    else:
+        # Use days parameter (default 30)
+        end_dt = datetime.utcnow()
+        start_dt = end_dt - timedelta(days=days if days else 30)
 
     # Fetch from PayPal
     try:
         paypal_service = PayPalService()
         parsed_transactions = await paypal_service.fetch_transactions(
             account_id=account_id,
-            start_date=start_date,
-            end_date=end_date
+            start_date=start_dt,
+            end_date=end_dt
         )
     except ValueError as e:
         logger.error(f"PayPal error: {e}")

@@ -20,6 +20,9 @@ export default function ImportPage() {
   const [paypalResult, setPaypalResult] = useState<any>(null);
   const [paypalError, setPaypalError] = useState<string | null>(null);
   const [paypalDays, setPaypalDays] = useState(30);
+  const [paypalStartDate, setPaypalStartDate] = useState("");
+  const [paypalEndDate, setPaypalEndDate] = useState("");
+  const [useCustomDates, setUseCustomDates] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,7 +69,18 @@ export default function ImportPage() {
     setPaypalResult(null);
 
     try {
-      const res = await fetch(`/api/backend/api/v1/import/paypal?account_id=1&days=${paypalDays}`, {
+      let url = `/api/backend/api/v1/import/paypal?account_id=1`;
+
+      if (useCustomDates) {
+        // Use date range
+        if (paypalStartDate) url += `&start_date=${paypalStartDate}`;
+        if (paypalEndDate) url += `&end_date=${paypalEndDate}`;
+      } else {
+        // Use days
+        url += `&days=${paypalDays}`;
+      }
+
+      const res = await fetch(url, {
         method: "POST",
         credentials: "include",
       });
@@ -167,21 +181,61 @@ export default function ImportPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePayPalSync} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="days">Tage zum Synchronisieren</Label>
-                <Input
-                  id="days"
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={paypalDays}
-                  onChange={(e) => setPaypalDays(parseInt(e.target.value))}
-                  required
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="use-custom-dates"
+                  checked={useCustomDates}
+                  onChange={(e) => setUseCustomDates(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Anzahl der abzurufenden Tage (1-365)
-                </p>
+                <Label htmlFor="use-custom-dates" className="cursor-pointer">
+                  Benutzerdefinierte Daten verwenden
+                </Label>
               </div>
+
+              {!useCustomDates ? (
+                <div className="space-y-2">
+                  <Label htmlFor="days">Tage zum Synchronisieren</Label>
+                  <Input
+                    id="days"
+                    type="number"
+                    min="1"
+                    max="365"
+                    value={paypalDays}
+                    onChange={(e) => setPaypalDays(parseInt(e.target.value))}
+                    required={!useCustomDates}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Anzahl der abzurufenden Tage (1-365)
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="start-date">Startdatum</Label>
+                    <Input
+                      id="start-date"
+                      type="date"
+                      value={paypalStartDate}
+                      onChange={(e) => setPaypalStartDate(e.target.value)}
+                      required={useCustomDates}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="end-date">Enddatum (optional)</Label>
+                    <Input
+                      id="end-date"
+                      type="date"
+                      value={paypalEndDate}
+                      onChange={(e) => setPaypalEndDate(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Leer lassen für heute
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {paypalError && (
                 <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
