@@ -29,6 +29,9 @@ export function NavHeader() {
               <Link href="/import" className="text-muted-foreground hover:text-foreground">
                 Import
               </Link>
+              <Link href="/settings" className="text-muted-foreground hover:text-foreground">
+                Einstellungen
+              </Link>
             </nav>
           </div>
           <SignOutButton />

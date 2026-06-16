@@ -123,6 +123,21 @@ export default async function Home() {
               </CardContent>
             </Card>
           </Link>
+
+          <Link href="/settings">
+            <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  ⚙️ Einstellungen
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Konten, Kategorien und Datenexport verwalten
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <Card>
