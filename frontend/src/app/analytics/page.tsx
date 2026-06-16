@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
         <NavHeader />
         <main className="p-8">
           <div className="mx-auto max-w-7xl">
-            <p className="text-muted-foreground">Loading charts...</p>
+            <p className="text-muted-foreground">Diagramme werden geladen...</p>
           </div>
         </main>
       </div>
@@ -118,24 +118,24 @@ export default function AnalyticsPage() {
       <main className="p-8">
         <div className="mx-auto max-w-7xl space-y-6">
           <div>
-            <h1 className="text-3xl font-bold">Analytics</h1>
+            <h1 className="text-3xl font-bold">Analysen</h1>
             <p className="text-muted-foreground mt-2">
-              Visual insights into your spending patterns
+              Visuelle Einblicke in Ihre Ausgabenmuster
             </p>
           </div>
 
           {/* Monthly Trend Line Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Income vs Expenses Trend</CardTitle>
+              <CardTitle>Einnahmen vs. Ausgaben Trend</CardTitle>
               <CardDescription>
-                Monthly income and expenses over the last 6 months
+                Monatliche Einnahmen und Ausgaben über die letzten 6 Monate
               </CardDescription>
             </CardHeader>
             <CardContent>
               {monthlyChartData.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  No data available for monthly trend
+                  Keine Daten für monatlichen Trend verfügbar
                 </p>
               ) : (
                 <ResponsiveContainer width="100%" height={300}>
@@ -153,14 +153,14 @@ export default function AnalyticsPage() {
                       dataKey="income"
                       stroke="#10b981"
                       strokeWidth={2}
-                      name="Income"
+                      name="Einnahmen"
                     />
                     <Line
                       type="monotone"
                       dataKey="expenses"
                       stroke="#ef4444"
                       strokeWidth={2}
-                      name="Expenses"
+                      name="Ausgaben"
                     />
                     <Line
                       type="monotone"
@@ -168,7 +168,7 @@ export default function AnalyticsPage() {
                       stroke="#3b82f6"
                       strokeWidth={2}
                       strokeDasharray="5 5"
-                      name="Net"
+                      name="Netto"
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -180,15 +180,15 @@ export default function AnalyticsPage() {
             {/* Category Pie Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Spending by Category</CardTitle>
+                <CardTitle>Ausgaben nach Kategorie</CardTitle>
                 <CardDescription>
-                  Distribution of expenses across categories
+                  Verteilung der Ausgaben über Kategorien
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {categoryPieData.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No expense data available
+                    Keine Ausgabendaten verfügbar
                   </p>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
@@ -236,15 +236,15 @@ export default function AnalyticsPage() {
             {/* Budget vs Actual Bar Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Budget vs Actual Spending</CardTitle>
+                <CardTitle>Budget vs. tatsächliche Ausgaben</CardTitle>
                 <CardDescription>
-                  Current month budget limits compared to actual spending
+                  Budgetgrenzen des aktuellen Monats im Vergleich zu tatsächlichen Ausgaben
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {budgetChartData.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No budgets set for this month
+                    Keine Budgets für diesen Monat festgelegt
                   </p>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
@@ -258,7 +258,7 @@ export default function AnalyticsPage() {
                       />
                       <Legend />
                       <Bar dataKey="budget" fill="#3b82f6" name="Budget" />
-                      <Bar dataKey="spent" fill="#ef4444" name="Spent" />
+                      <Bar dataKey="spent" fill="#ef4444" name="Ausgegeben" />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
@@ -279,7 +279,7 @@ export default function AnalyticsPage() {
                                 overBudget ? "text-red-600" : "text-green-600"
                               }`}
                             >
-                              {overBudget ? "OVER" : `${item.percentage}%`}
+                              {overBudget ? "ÜBER" : `${item.percentage}%`}
                             </span>
                           </div>
                         </div>
@@ -294,12 +294,12 @@ export default function AnalyticsPage() {
           {/* Summary Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Key Insights</CardTitle>
+              <CardTitle>Wichtige Erkenntnisse</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border p-4">
-                  <div className="text-sm text-muted-foreground mb-1">Top Spending Category</div>
+                  <div className="text-sm text-muted-foreground mb-1">Top-Ausgabenkategorie</div>
                   {byCategory.length > 0 ? (
                     <>
                       <div className="text-2xl font-bold">{byCategory[0].category_name}</div>
@@ -308,23 +308,23 @@ export default function AnalyticsPage() {
                       </div>
                     </>
                   ) : (
-                    <div className="text-sm text-muted-foreground">No data</div>
+                    <div className="text-sm text-muted-foreground">Keine Daten</div>
                   )}
                 </div>
 
                 <div className="rounded-lg border p-4">
-                  <div className="text-sm text-muted-foreground mb-1">Categories Tracked</div>
+                  <div className="text-sm text-muted-foreground mb-1">Verfolgte Kategorien</div>
                   <div className="text-2xl font-bold">{byCategory.length}</div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    Active spending categories
+                    Aktive Ausgabenkategorien
                   </div>
                 </div>
 
                 <div className="rounded-lg border p-4">
-                  <div className="text-sm text-muted-foreground mb-1">Budgets Set</div>
+                  <div className="text-sm text-muted-foreground mb-1">Festgelegte Budgets</div>
                   <div className="text-2xl font-bold">{budgetProgress.length}</div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    For current month
+                    Für aktuellen Monat
                   </div>
                 </div>
               </div>

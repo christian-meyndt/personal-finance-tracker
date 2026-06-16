@@ -82,7 +82,7 @@ export default function CategoriesPage() {
         <NavHeader />
         <main className="p-8">
           <div className="mx-auto max-w-7xl">
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">Lädt...</p>
           </div>
         </main>
       </div>
@@ -95,14 +95,14 @@ export default function CategoriesPage() {
       <main className="p-8">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">Categories</h1>
+            <h1 className="text-3xl font-bold">Kategorien</h1>
             {uncategorized.length > 0 && (
               <div className="flex items-center gap-3">
                 <span className="rounded-full bg-yellow-100 dark:bg-yellow-900 px-3 py-1 text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                  {uncategorized.length} uncategorized
+                  {uncategorized.length} nicht kategorisiert
                 </span>
                 <Button onClick={handleAutoCategorize} disabled={categorizing}>
-                  {categorizing ? "Categorizing..." : "Auto-Categorize All"}
+                  {categorizing ? "Kategorisiere..." : "Alle automatisch kategorisieren"}
                 </Button>
               </div>
             )}
@@ -111,10 +111,10 @@ export default function CategoriesPage() {
           {result && !result.error && (
             <div className="rounded-md bg-green-50 dark:bg-green-950 p-4">
               <p className="font-medium text-green-900 dark:text-green-100">
-                Categorization Complete! 🎉
+                Kategorisierung abgeschlossen! 🎉
               </p>
               <p className="text-sm text-green-800 dark:text-green-200">
-                Processed: {result.processed}, Categorized: {result.categorized}
+                Verarbeitet: {result.processed}, Kategorisiert: {result.categorized}
               </p>
             </div>
           )}
@@ -130,10 +130,10 @@ export default function CategoriesPage() {
           {uncategorized.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Uncategorized Transactions</CardTitle>
+                <CardTitle>Nicht kategorisierte Transaktionen</CardTitle>
                 <CardDescription>
-                  These transactions haven't been assigned a category yet.
-                  Click "Auto-Categorize All" to use rules and AI, or assign categories manually in the Transactions page.
+                  Diese Transaktionen wurden noch keiner Kategorie zugeordnet.
+                  Klicken Sie auf "Alle automatisch kategorisieren" um Regeln und KI zu verwenden, oder weisen Sie Kategorien manuell auf der Transaktionsseite zu.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -173,7 +173,7 @@ export default function CategoriesPage() {
                 <div className="mt-4">
                   <Link href="/transactions">
                     <Button variant="outline" size="sm" className="w-full">
-                      View All Transactions
+                      Alle Transaktionen anzeigen
                     </Button>
                   </Link>
                 </div>
@@ -186,10 +186,10 @@ export default function CategoriesPage() {
               <CardContent className="py-8">
                 <div className="text-center">
                   <p className="text-lg font-medium text-green-600 dark:text-green-400">
-                    ✓ All transactions are categorized!
+                    ✓ Alle Transaktionen sind kategorisiert!
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Great job! All your transactions have been assigned to categories.
+                    Gut gemacht! Alle Ihre Transaktionen wurden Kategorien zugeordnet.
                   </p>
                 </div>
               </CardContent>
@@ -198,15 +198,15 @@ export default function CategoriesPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>All Categories ({categories.length})</CardTitle>
+              <CardTitle>Alle Kategorien ({categories.length})</CardTitle>
               <CardDescription>
-                Categories are used to organize your transactions and track spending by type.
+                Kategorien werden verwendet, um Ihre Transaktionen zu organisieren und Ausgaben nach Typ zu verfolgen.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {categories.length === 0 ? (
                 <div className="py-8 text-center text-muted-foreground">
-                  No categories yet.
+                  Noch keine Kategorien.
                 </div>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -248,39 +248,39 @@ export default function CategoriesPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>How Categorization Works</CardTitle>
+              <CardTitle>Wie Kategorisierung funktioniert</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4 text-sm">
                 <div>
-                  <p className="font-medium mb-2">1. Rule-Based Matching</p>
+                  <p className="font-medium mb-2">1. Regelbasierte Zuordnung</p>
                   <p className="text-muted-foreground">
-                    Transactions are automatically categorized using pattern matching rules.
-                    For example: Amazon → Shopping, Netflix → Subscriptions, Lidl → Groceries.
+                    Transaktionen werden automatisch durch Musterabgleichsregeln kategorisiert.
+                    Zum Beispiel: Amazon → Einkäufe, Netflix → Abonnements, Lidl → Lebensmittel.
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Currently active: 17 rules for common merchants
+                    Derzeit aktiv: 17 Regeln für gängige Händler
                   </p>
                 </div>
 
                 <div>
-                  <p className="font-medium mb-2">2. AI Fallback (Optional)</p>
+                  <p className="font-medium mb-2">2. KI-Fallback (Optional)</p>
                   <p className="text-muted-foreground">
-                    If no rule matches and you have configured the Anthropic API key,
-                    Claude Haiku will intelligently categorize the transaction based on
-                    the merchant name and description.
+                    Wenn keine Regel zutrifft und Sie den Anthropic API-Schlüssel konfiguriert haben,
+                    kategorisiert Claude Haiku die Transaktion intelligent basierend auf
+                    dem Händlernamen und der Beschreibung.
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    AI categorization requires ANTHROPIC_API_KEY in backend/.env
+                    KI-Kategorisierung erfordert ANTHROPIC_API_KEY in backend/.env
                   </p>
                 </div>
 
                 <div>
-                  <p className="font-medium mb-2">3. Manual Assignment</p>
+                  <p className="font-medium mb-2">3. Manuelle Zuweisung</p>
                   <p className="text-muted-foreground">
-                    You can manually assign categories to transactions on the Transactions page.
-                    Future transactions from the same merchant can automatically use this category
-                    by creating a rule.
+                    Sie können Transaktionen auf der Transaktionsseite manuell Kategorien zuweisen.
+                    Zukünftige Transaktionen vom gleichen Händler können diese Kategorie automatisch verwenden,
+                    indem Sie eine Regel erstellen.
                   </p>
                 </div>
               </div>

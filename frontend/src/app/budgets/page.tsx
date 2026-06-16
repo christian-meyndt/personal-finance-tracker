@@ -98,7 +98,7 @@ export default function BudgetsPage() {
         <NavHeader />
         <main className="p-8">
           <div className="mx-auto max-w-7xl">
-            <p className="text-muted-foreground">Loading budgets...</p>
+            <p className="text-muted-foreground">Budgets werden geladen...</p>
           </div>
         </main>
       </div>
@@ -106,7 +106,7 @@ export default function BudgetsPage() {
   }
 
   const currentDate = new Date();
-  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const monthName = currentDate.toLocaleString('de-DE', { month: 'long', year: 'numeric' });
 
   return (
     <div className="min-h-screen">
@@ -116,7 +116,7 @@ export default function BudgetsPage() {
           <div>
             <h1 className="text-3xl font-bold">Budgets</h1>
             <p className="text-muted-foreground mt-2">
-              Track spending against monthly budget limits
+              Ausgaben gegenüber monatlichen Budgetgrenzen verfolgen
             </p>
           </div>
 
@@ -124,9 +124,9 @@ export default function BudgetsPage() {
           {progress.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>{monthName} - Budget Progress</CardTitle>
+                <CardTitle>{monthName} - Budgetfortschritt</CardTitle>
                 <CardDescription>
-                  Your spending this month compared to budget limits
+                  Ihre Ausgaben diesen Monat im Vergleich zu Budgetgrenzen
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -155,9 +155,9 @@ export default function BudgetsPage() {
                               item.over_budget ? "text-red-600" : "text-muted-foreground"
                             }`}>
                               {item.over_budget ? (
-                                <>Over by {Math.abs(remaining).toFixed(2)} €</>
+                                <>Überschritten um {Math.abs(remaining).toFixed(2)} €</>
                               ) : (
-                                <>{remaining.toFixed(2)} € remaining</>
+                                <>{remaining.toFixed(2)} € verbleibend</>
                               )}
                             </div>
                           </div>
@@ -171,7 +171,7 @@ export default function BudgetsPage() {
                           />
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {item.percentage}% used
+                          {item.percentage}% verwendet
                         </div>
                       </div>
                     );
@@ -186,10 +186,10 @@ export default function BudgetsPage() {
               <CardContent className="py-8">
                 <div className="text-center">
                   <p className="text-muted-foreground">
-                    No budgets set for {monthName}
+                    Keine Budgets für {monthName} festgelegt
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Create a budget below to start tracking your spending
+                    Erstellen Sie unten ein Budget, um Ihre Ausgaben zu verfolgen
                   </p>
                 </div>
               </CardContent>
@@ -199,16 +199,16 @@ export default function BudgetsPage() {
           {/* Create Budget */}
           <Card>
             <CardHeader>
-              <CardTitle>Create Budget</CardTitle>
+              <CardTitle>Budget erstellen</CardTitle>
               <CardDescription>
-                Set a spending limit for a category
+                Legen Sie ein Ausgabenlimit für eine Kategorie fest
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreateBudget} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Kategorie</Label>
                     <select
                       id="category"
                       value={selectedCategory}
@@ -216,7 +216,7 @@ export default function BudgetsPage() {
                       className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       required
                     >
-                      <option value="">Select a category</option>
+                      <option value="">Kategorie auswählen</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                           {cat.icon} {cat.name}
@@ -226,7 +226,7 @@ export default function BudgetsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="amount">Budget Amount (€)</Label>
+                    <Label htmlFor="amount">Budgetbetrag (€)</Label>
                     <Input
                       id="amount"
                       type="number"
@@ -240,7 +240,7 @@ export default function BudgetsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="year">Year</Label>
+                    <Label htmlFor="year">Jahr</Label>
                     <Input
                       id="year"
                       type="number"
@@ -253,7 +253,7 @@ export default function BudgetsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="month">Month</Label>
+                    <Label htmlFor="month">Monat</Label>
                     <select
                       id="month"
                       value={month}
@@ -263,7 +263,7 @@ export default function BudgetsPage() {
                     >
                       {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                         <option key={m} value={m}>
-                          {new Date(2000, m - 1).toLocaleString('default', { month: 'long' })}
+                          {new Date(2000, m - 1).toLocaleString('de-DE', { month: 'long' })}
                         </option>
                       ))}
                     </select>
@@ -271,7 +271,7 @@ export default function BudgetsPage() {
                 </div>
 
                 <Button type="submit" disabled={creating}>
-                  {creating ? "Creating..." : "Create Budget"}
+                  {creating ? "Erstelle..." : "Budget erstellen"}
                 </Button>
               </form>
             </CardContent>
@@ -281,9 +281,9 @@ export default function BudgetsPage() {
           {budgets.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>All Budgets</CardTitle>
+                <CardTitle>Alle Budgets</CardTitle>
                 <CardDescription>
-                  View all budget limits across all months
+                  Alle Budgetgrenzen über alle Monate hinweg anzeigen
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -291,7 +291,7 @@ export default function BudgetsPage() {
                   {budgets.map((budget) => {
                     const amount = budget.amount_cents / 100;
                     const category = categories.find((c) => c.id === budget.category_id);
-                    const monthName = new Date(budget.year, budget.month - 1).toLocaleString('default', {
+                    const monthName = new Date(budget.year, budget.month - 1).toLocaleString('de-DE', {
                       month: 'short',
                       year: 'numeric'
                     });

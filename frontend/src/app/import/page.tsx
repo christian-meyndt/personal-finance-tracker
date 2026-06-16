@@ -95,27 +95,27 @@ export default function ImportPage() {
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-4">
           <Link href="/" className="text-muted-foreground hover:text-foreground">
-            ← Back
+            ← Zurück
           </Link>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold">Import Transactions</h1>
+            <h1 className="text-3xl font-bold">Transaktionen importieren</h1>
             <p className="text-muted-foreground mt-2">
-              Upload a CSV file from your bank (DKB, Hanseatic Bank, or Openbank)
+              Laden Sie eine CSV-Datei von Ihrer Bank hoch (DKB, Hanseatic Bank oder Openbank)
             </p>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>CSV Upload</CardTitle>
+            <CardTitle>CSV-Upload</CardTitle>
             <CardDescription>
-              Supported formats: DKB, Hanseatic Bank, Openbank
+              Unterstützte Formate: DKB, Hanseatic Bank, Openbank
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="file">CSV File</Label>
+                <Label htmlFor="file">CSV-Datei</Label>
                 <Input
                   id="file"
                   type="file"
@@ -124,7 +124,7 @@ export default function ImportPage() {
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Select a CSV export from your bank
+                  Wählen Sie einen CSV-Export von Ihrer Bank aus
                 </p>
               </div>
 
@@ -137,22 +137,22 @@ export default function ImportPage() {
               {result && (
                 <div className="rounded-md bg-green-50 dark:bg-green-950 p-4 space-y-2">
                   <p className="font-medium text-green-900 dark:text-green-100">
-                    Import Successful! 🎉
+                    Import erfolgreich! 🎉
                   </p>
                   <div className="text-sm text-green-800 dark:text-green-200">
-                    <p>Bank format detected: <strong>{result.bank}</strong></p>
-                    <p>Imported: <strong>{result.imported}</strong> new transactions</p>
-                    <p>Skipped: <strong>{result.skipped}</strong> duplicates</p>
-                    <p>Total: <strong>{result.total}</strong> transactions processed</p>
+                    <p>Bankformat erkannt: <strong>{result.bank}</strong></p>
+                    <p>Importiert: <strong>{result.imported}</strong> neue Transaktionen</p>
+                    <p>Übersprungen: <strong>{result.skipped}</strong> Duplikate</p>
+                    <p>Gesamt: <strong>{result.total}</strong> Transaktionen verarbeitet</p>
                   </div>
                   <p className="text-xs text-green-700 dark:text-green-300 mt-2">
-                    Redirecting to transactions list...
+                    Weiterleitung zur Transaktionsliste...
                   </p>
                 </div>
               )}
 
               <Button type="submit" disabled={!file || uploading} className="w-full">
-                {uploading ? "Uploading..." : "Upload & Import"}
+                {uploading ? "Hochladen..." : "Hochladen & Importieren"}
               </Button>
             </form>
           </CardContent>
@@ -160,15 +160,15 @@ export default function ImportPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>PayPal Sync</CardTitle>
+            <CardTitle>PayPal-Synchronisierung</CardTitle>
             <CardDescription>
-              Sync transactions directly from your PayPal account
+              Transaktionen direkt von Ihrem PayPal-Konto synchronisieren
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePayPalSync} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="days">Days to sync</Label>
+                <Label htmlFor="days">Tage zum Synchronisieren</Label>
                 <Input
                   id="days"
                   type="number"
@@ -179,7 +179,7 @@ export default function ImportPage() {
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Number of days to fetch (1-365)
+                  Anzahl der abzurufenden Tage (1-365)
                 </p>
               </div>
 
@@ -192,37 +192,37 @@ export default function ImportPage() {
               {paypalResult && (
                 <div className="rounded-md bg-green-50 dark:bg-green-950 p-4 space-y-2">
                   <p className="font-medium text-green-900 dark:text-green-100">
-                    PayPal Sync Successful! 🎉
+                    PayPal-Synchronisierung erfolgreich! 🎉
                   </p>
                   <div className="text-sm text-green-800 dark:text-green-200">
-                    <p>Imported: <strong>{paypalResult.imported}</strong> new transactions</p>
-                    <p>Skipped: <strong>{paypalResult.skipped}</strong> duplicates</p>
-                    <p>Total: <strong>{paypalResult.total}</strong> transactions processed</p>
+                    <p>Importiert: <strong>{paypalResult.imported}</strong> neue Transaktionen</p>
+                    <p>Übersprungen: <strong>{paypalResult.skipped}</strong> Duplikate</p>
+                    <p>Gesamt: <strong>{paypalResult.total}</strong> Transaktionen verarbeitet</p>
                   </div>
                   <p className="text-xs text-green-700 dark:text-green-300 mt-2">
-                    Redirecting to transactions list...
+                    Weiterleitung zur Transaktionsliste...
                   </p>
                 </div>
               )}
 
               <Button type="submit" disabled={paypalSyncing} className="w-full">
-                {paypalSyncing ? "Syncing..." : "Sync PayPal Transactions"}
+                {paypalSyncing ? "Synchronisiere..." : "PayPal-Transaktionen synchronisieren"}
               </Button>
 
               <p className="text-xs text-muted-foreground">
-                Note: PayPal API credentials must be configured in backend/.env
+                Hinweis: PayPal-API-Anmeldeinformationen müssen in backend/.env konfiguriert sein
               </p>
             </form>
           </CardContent>
         </Card>
 
         <div className="text-sm text-muted-foreground space-y-2">
-          <p className="font-medium">Supported Banks:</p>
+          <p className="font-medium">Unterstützte Banken:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>DKB (Deutsche Kreditbank) - German format with semicolon delimiter</li>
-            <li>Hanseatic Bank - Credit card statements</li>
-            <li>Openbank - Spanish bank with flexible format</li>
-            <li>PayPal - Direct API sync (requires credentials)</li>
+            <li>DKB (Deutsche Kreditbank) - Deutsches Format mit Semikolon-Trennzeichen</li>
+            <li>Hanseatic Bank - Kreditkartenabrechnungen</li>
+            <li>Openbank - Spanische Bank mit flexiblem Format</li>
+            <li>PayPal - Direkte API-Synchronisierung (erfordert Anmeldeinformationen)</li>
           </ul>
         </div>
       </div>

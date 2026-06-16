@@ -50,28 +50,28 @@ export default async function TransactionsPage() {
       <NavHeader />
       <main className="p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <h1 className="text-3xl font-bold">Transactions</h1>
+          <h1 className="text-3xl font-bold">Transaktionen</h1>
 
         <Card>
           <CardHeader>
-            <CardTitle>All Transactions</CardTitle>
+            <CardTitle>Alle Transaktionen</CardTitle>
           </CardHeader>
           <CardContent>
             {transactions.length === 0 ? (
               <div className="py-8 text-center text-muted-foreground">
-                No transactions yet. Import a CSV file to get started.
+                Noch keine Transaktionen. Importieren Sie eine CSV-Datei, um zu beginnen.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm">
-                      <th className="pb-3 font-medium">Date</th>
-                      <th className="pb-3 font-medium">Description</th>
-                      <th className="pb-3 font-medium">Counterparty</th>
-                      <th className="pb-3 font-medium text-right">Amount</th>
-                      <th className="pb-3 font-medium">Category</th>
-                      <th className="pb-3 font-medium">Source</th>
+                      <th className="pb-3 font-medium">Datum</th>
+                      <th className="pb-3 font-medium">Beschreibung</th>
+                      <th className="pb-3 font-medium">Gegenseite</th>
+                      <th className="pb-3 font-medium text-right">Betrag</th>
+                      <th className="pb-3 font-medium">Kategorie</th>
+                      <th className="pb-3 font-medium">Quelle</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -95,7 +95,7 @@ export default async function TransactionsPage() {
                                 <span className="text-xs">{category.name}</span>
                               </span>
                             ) : (
-                              <span className="text-xs text-muted-foreground">Uncategorized</span>
+                              <span className="text-xs text-muted-foreground">Nicht kategorisiert</span>
                             )}
                           </td>
                           <td className="py-3">
@@ -114,7 +114,7 @@ export default async function TransactionsPage() {
         </Card>
 
         <div className="text-sm text-muted-foreground">
-          Showing {transactions.length} transactions
+          {transactions.length} Transaktionen angezeigt
         </div>
         </div>
       </main>
