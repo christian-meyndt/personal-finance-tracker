@@ -123,7 +123,7 @@ export default function ImportPage() {
           <CardHeader>
             <CardTitle>CSV-Upload</CardTitle>
             <CardDescription>
-              Unterstützte Formate: DKB, Hanseatic Bank, Openbank
+              Unterstützte Formate: DKB, Hanseatic Bank, Openbank, PayPal
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -276,8 +276,13 @@ export default function ImportPage() {
             <li>DKB (Deutsche Kreditbank) - Deutsches Format mit Semikolon-Trennzeichen</li>
             <li>Hanseatic Bank - Kreditkartenabrechnungen</li>
             <li>Openbank - Spanische Bank mit flexiblem Format</li>
-            <li>PayPal - Direkte API-Synchronisierung (erfordert Anmeldeinformationen)</li>
+            <li>PayPal CSV - Exportieren Sie CSV von PayPal.com → Aktivitäten → Auszüge</li>
+            <li>PayPal API - Direkte API-Synchronisierung (erfordert Business-Konto)</li>
           </ul>
+          <p className="text-xs mt-2">
+            <strong>PayPal CSV-Export:</strong> Melden Sie sich bei PayPal.com an → Aktivitäten → Auszüge →
+            Benutzerdefiniert → CSV-Datei herunterladen → Hier hochladen (kein Business-Konto erforderlich)
+          </p>
         </div>
       </div>
     </main>
