@@ -38,16 +38,21 @@ class DKBParser(BaseParser):
 
         Format:
         - Encoding: UTF-8 with BOM
-        - Delimiter: semicolon (;)
-        - Date format: DD.MM.YYYY
+        - Delimiter: semicolon (;) or tab (\t)
+        - Date format: DD.MM.YYYY or DD.MM.YY
         - Amount: German locale (e.g., "1.234,56")
         - Has metadata rows before the actual data
         """
         transactions = []
 
         try:
+            # Detect delimiter (tab or semicolon)
+            first_line = content.split('\n')[0]
+            delimiter = '\t' if '\t' in first_line else ';'
+            logger.info(f"DKB CSV delimiter detected: {'tab' if delimiter == '\\t' else 'semicolon'}")
+
             # Read with UTF-8-sig to handle BOM
-            reader = csv.reader(StringIO(content), delimiter=';')
+            reader = csv.reader(StringIO(content), delimiter=delimiter)
 
             # Find the header row by looking for 'Buchungsdatum'
             header_index = None
@@ -69,8 +74,13 @@ class DKBParser(BaseParser):
 
             # Find description/usage columns
             usage_idx = next((i for i, h in enumerate(header_row) if 'Verwendungszweck' in h), None)
-            counterparty_idx = next((i for i, h in enumerate(header_row)
-                                    if 'Auftraggeber' in h or 'Empfänger' in h or 'Gläubiger' in h), None)
+            # Look for recipient column (Zahlungsempfänger*in comes before Gläubiger-ID, so check lowercase)
+            recipient_idx = next((i for i, h in enumerate(header_row) if 'empfänger' in h.lower()), None)
+            # Fallback to other counterparty columns
+            if not recipient_idx:
+                recipient_idx = next((i for i, h in enumerate(header_row)
+                                        if 'Auftraggeber' in h or 'Gläubiger-ID' in h), None)
+            counterparty_idx = recipient_idx
 
             # Parse data rows
             for row in all_rows[header_index + 1:]:
@@ -78,11 +88,23 @@ class DKBParser(BaseParser):
                     continue  # Skip incomplete rows
 
                 try:
-                    # Parse date (DD.MM.YYYY)
+                    # Parse date (DD.MM.YYYY or DD.MM.YY)
                     date_str = row[date_idx].strip()
                     if not date_str:
                         continue
-                    trans_date = datetime.strptime(date_str, '%d.%m.%Y').date()
+
+                    # Try both date formats
+                    trans_date = None
+                    for date_format in ['%d.%m.%Y', '%d.%m.%y']:
+                        try:
+                            trans_date = datetime.strptime(date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if trans_date is None:
+                        logger.warning(f"Could not parse date: {date_str}")
+                        continue
 
                     # Parse amount (German format)
                     amount_str = row[amount_idx].strip()
@@ -92,8 +114,18 @@ class DKBParser(BaseParser):
                     amount_cents = int(amount_float * 100)
 
                     # Get description and counterparty
-                    description = row[usage_idx].strip() if usage_idx and len(row) > usage_idx else None
-                    counterparty = row[counterparty_idx].strip() if counterparty_idx and len(row) > counterparty_idx else None
+                    usage = row[usage_idx].strip() if usage_idx and len(row) > usage_idx else None
+                    recipient = row[counterparty_idx].strip() if counterparty_idx and len(row) > counterparty_idx else None
+
+                    # For VISA card transactions, use merchant name as description
+                    # "VISA Debitkartenumsatz vom DD.MM.YYYY" is too generic
+                    if usage and 'VISA Debitkartenumsatz' in usage and recipient:
+                        description = recipient  # Use merchant name (e.g., "Lidl.sagt.Danke/Geretsried")
+                        counterparty = None  # Merchant is already in description
+                    else:
+                        # For regular transactions, use usage purpose as description
+                        description = usage
+                        counterparty = recipient
 
                     # Generate import hash
                     import_hash = self.generate_import_hash(

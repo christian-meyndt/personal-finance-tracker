@@ -21,6 +21,14 @@ class AnalyticsService:
 
     def __init__(self, db: Session):
         self.db = db
+        self._transfer_category_id = self._get_transfer_category_id()
+
+    def _get_transfer_category_id(self) -> Optional[int]:
+        """Get the Transfer category ID to exclude from analytics."""
+        transfer_cat = self.db.execute(
+            select(Category).where(Category.name == "Transfer")
+        ).scalar_one_or_none()
+        return transfer_cat.id if transfer_cat else None
 
     def get_summary(
         self,
@@ -49,6 +57,9 @@ class AnalyticsService:
             query = query.where(Transaction.date <= end_date)
         if account_id:
             query = query.where(Transaction.account_id == account_id)
+        # Exclude transfers from financial summaries
+        if self._transfer_category_id:
+            query = query.where(Transaction.category_id != self._transfer_category_id)
 
         transactions = self.db.execute(query).scalars().all()
 
@@ -96,6 +107,9 @@ class AnalyticsService:
             query = query.where(Transaction.date <= end_date)
         if account_id:
             query = query.where(Transaction.account_id == account_id)
+        # Exclude transfers from category breakdown
+        if self._transfer_category_id:
+            query = query.where(Transaction.category_id != self._transfer_category_id)
 
         transactions = self.db.execute(query).scalars().all()
 
@@ -174,6 +188,9 @@ class AnalyticsService:
         query = select(Transaction).where(Transaction.date >= start_date)
         if account_id:
             query = query.where(Transaction.account_id == account_id)
+        # Exclude transfers from monthly trends
+        if self._transfer_category_id:
+            query = query.where(Transaction.category_id != self._transfer_category_id)
 
         transactions = self.db.execute(query).scalars().all()
 
@@ -318,6 +335,9 @@ class AnalyticsService:
 
         if account_id:
             query = query.where(Transaction.account_id == account_id)
+        # Exclude transfers from recent transactions
+        if self._transfer_category_id:
+            query = query.where(Transaction.category_id != self._transfer_category_id)
 
         transactions = self.db.execute(query).scalars().all()
 

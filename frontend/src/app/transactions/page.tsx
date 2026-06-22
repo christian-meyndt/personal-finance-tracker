@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NavHeader } from "@/components/nav-header";
+import { TransactionList } from "@/components/transaction-list";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
@@ -57,65 +58,9 @@ export default async function TransactionsPage() {
             <CardTitle>Alle Transaktionen</CardTitle>
           </CardHeader>
           <CardContent>
-            {transactions.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground">
-                Noch keine Transaktionen. Importieren Sie eine CSV-Datei, um zu beginnen.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left text-sm">
-                      <th className="pb-3 font-medium">Datum</th>
-                      <th className="pb-3 font-medium">Beschreibung</th>
-                      <th className="pb-3 font-medium">Gegenseite</th>
-                      <th className="pb-3 font-medium text-right">Betrag</th>
-                      <th className="pb-3 font-medium">Kategorie</th>
-                      <th className="pb-3 font-medium">Quelle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((txn: any) => {
-                      const amount = txn.amount_cents / 100;
-                      const isExpense = amount < 0;
-                      const category = categories.find((c: any) => c.id === txn.category_id);
-
-                      return (
-                        <tr key={txn.id} className="border-b text-sm">
-                          <td className="py-3">{txn.date}</td>
-                          <td className="py-3 max-w-xs truncate">{txn.description || "-"}</td>
-                          <td className="py-3 max-w-xs truncate">{txn.counterparty || "-"}</td>
-                          <td className={`py-3 text-right font-mono ${isExpense ? "text-red-600" : "text-green-600"}`}>
-                            {amount.toFixed(2)} €
-                          </td>
-                          <td className="py-3">
-                            {category ? (
-                              <span className="inline-flex items-center gap-1">
-                                {category.icon && <span>{category.icon}</span>}
-                                <span className="text-xs">{category.name}</span>
-                              </span>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">Nicht kategorisiert</span>
-                            )}
-                          </td>
-                          <td className="py-3">
-                            <span className="text-xs rounded-full bg-muted px-2 py-1">
-                              {txn.source || "manual"}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <TransactionList transactions={transactions} categories={categories} />
           </CardContent>
         </Card>
-
-        <div className="text-sm text-muted-foreground">
-          {transactions.length} Transaktionen angezeigt
-        </div>
         </div>
       </main>
     </div>
