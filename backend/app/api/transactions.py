@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
@@ -12,6 +12,38 @@ from app.schemas.transaction import TransactionResponse, TransactionUpdate
 from app.services.categorization import CategorizationService
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
+
+
+@router.get("/count")
+async def count_transactions(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Session = Depends(get_db),
+    account_id: int | None = Query(None),
+    category_id: int | None = Query(None),
+    date_from: str | None = Query(None),
+    date_to: str | None = Query(None),
+    search: str | None = Query(None),
+) -> dict:
+    """Get total count of transactions matching filters."""
+    query = select(func.count(Transaction.id))
+
+    if account_id is not None:
+        query = query.where(Transaction.account_id == account_id)
+    if category_id is not None:
+        query = query.where(Transaction.category_id == category_id)
+    if date_from:
+        query = query.where(Transaction.date >= date_from)
+    if date_to:
+        query = query.where(Transaction.date <= date_to)
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.where(
+            (Transaction.description.ilike(search_pattern))
+            | (Transaction.counterparty.ilike(search_pattern))
+        )
+
+    count = db.execute(query).scalar()
+    return {"count": count}
 
 
 @router.get("", response_model=list[TransactionResponse])

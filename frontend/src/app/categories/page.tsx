@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { NavHeader } from "@/components/nav-header";
 
 export default function CategoriesPage() {
@@ -14,6 +16,41 @@ export default function CategoriesPage() {
   const [categorizing, setCategorizing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // New category form
+  const [newName, setNewName] = useState("");
+  const [newIcon, setNewIcon] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Nice color palette for categories
+  const categoryColors = [
+    "#EF4444", "#F59E0B", "#10B981", "#3B82F6", "#8B5CF6",
+    "#EC4899", "#06B6D4", "#84CC16", "#F97316", "#6366F1",
+    "#14B8A6", "#A855F7", "#EAB308", "#22C55E", "#0EA5E9",
+    "#D946EF", "#F43F5E", "#78716C", "#64748B"
+  ];
+
+  // Generate unique color based on existing categories
+  const getUniqueColor = () => {
+    const usedColors = new Set(categories.map((c: any) => c.color).filter(Boolean));
+    const availableColors = categoryColors.filter(c => !usedColors.has(c));
+    if (availableColors.length > 0) {
+      return availableColors[0];
+    }
+    // If all colors used, pick a random one
+    return categoryColors[Math.floor(Math.random() * categoryColors.length)];
+  };
+
+  // Common emojis for finance categories
+  const commonEmojis = [
+    "🛒", "🍽️", "🚗", "🎬", "🛍️", "⚕️", "⚡", "🏠", "💰", "📱",
+    "🎯", "📚", "⚽", "🎮", "✈️", "🏥", "🔧", "👕", "💄", "🐕",
+    "🌳", "🎵", "📺", "💻", "☕", "🍺", "🎂", "💳", "🔑", "📦",
+    "🚌", "🚕", "⛽", "🏋️", "🧘", "💇", "🎨", "📷", "🎪", "🏖️",
+    "🍕", "🍔", "🥗", "🍜", "☎️", "📧", "🎓", "🏦", "🏪", "🛠️",
+    "🏃", "🚴", "🏊", "🎾", "🏀", "⚾", "🏈", "⛷️", "🏂", "🎿"
+  ];
 
   useEffect(() => {
     loadData();
@@ -73,6 +110,43 @@ export default function CategoriesPage() {
       setResult({ error: err.message });
     } finally {
       setCategorizing(false);
+    }
+  }
+
+  async function handleCreateCategory(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newName) return;
+
+    setCreating(true);
+
+    try {
+      const res = await fetch("/api/backend/api/v1/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: newName,
+          icon: newIcon || null,
+          color: getUniqueColor(),
+        }),
+      });
+
+      if (res.ok) {
+        // Reset form
+        setNewName("");
+        setNewIcon("");
+
+        // Reload categories
+        await loadData();
+        alert("Kategorie erfolgreich erstellt!");
+      } else {
+        alert("Fehler beim Erstellen der Kategorie");
+      }
+    } catch (error) {
+      console.error("Error creating category:", error);
+      alert("Fehler beim Erstellen der Kategorie");
+    } finally {
+      setCreating(false);
     }
   }
 
@@ -195,6 +269,120 @@ export default function CategoriesPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Create New Category Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Neue Kategorie erstellen</CardTitle>
+              <CardDescription>
+                Erstellen Sie eine eigene Kategorie für Ihre Transaktionen
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleCreateCategory} className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name *</Label>
+                    <Input
+                      id="name"
+                      placeholder="z.B. Sport, Bildung, Haustiere"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="icon">Icon (Emoji)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="icon"
+                        placeholder="z.B. ⚽ 📚 🐕"
+                        value={newIcon}
+                        onChange={(e) => setNewIcon(e.target.value)}
+                        maxLength={2}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      >
+                        {showEmojiPicker ? "Schließen" : "Emoji..."}
+                      </Button>
+                    </div>
+                    {showEmojiPicker && (
+                      <div className="border-2 rounded-lg p-4 bg-white dark:bg-gray-900">
+                        <div className="mb-3 text-sm font-semibold">Emoji wählen ({commonEmojis.length} verfügbar):</div>
+                        <div
+                          className="border rounded p-2 bg-gray-50 dark:bg-gray-950"
+                          style={{
+                            height: '240px',
+                            overflowY: 'scroll',
+                            overflowX: 'hidden'
+                          }}
+                        >
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(10, 1fr)',
+                            gap: '8px'
+                          }}>
+                            {commonEmojis.map((emoji, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  setNewIcon(emoji);
+                                  setShowEmojiPicker(false);
+                                }}
+                                style={{
+                                  fontSize: '24px',
+                                  padding: '8px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  background: 'white',
+                                  width: '40px',
+                                  height: '40px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Optional: Klicken Sie auf "Emoji..." für Auswahl
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="flex gap-2">
+                  <Button type="submit" disabled={creating || !newName}>
+                    {creating ? "Erstellt..." : "Kategorie erstellen"}
+                  </Button>
+                  {newName && (
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-md border">
+                      <span className="text-lg">{newIcon || "📦"}</span>
+                      <span className="font-medium">{newName}</span>
+                      <div
+                        className="w-4 h-4 rounded-full border ml-2"
+                        style={{ backgroundColor: getUniqueColor() }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>

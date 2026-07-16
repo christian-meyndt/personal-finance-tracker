@@ -37,7 +37,13 @@ export default function ImportPage() {
       formData.append("file", file);
       formData.append("account_id", "1"); // Default to account 1 for now
 
-      const res = await fetch("/api/backend/api/v1/import/csv", {
+      // Detect if it's a PDF (Hanseatic Bank) or CSV
+      const isPdf = file.name.toLowerCase().endsWith('.pdf');
+      const endpoint = isPdf
+        ? "/api/backend/api/v1/import/pdf/hanseatic"
+        : "/api/backend/api/v1/import/csv";
+
+      const res = await fetch(endpoint, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -114,31 +120,31 @@ export default function ImportPage() {
           <div className="flex-1">
             <h1 className="text-3xl font-bold">Transaktionen importieren</h1>
             <p className="text-muted-foreground mt-2">
-              Laden Sie eine CSV-Datei von Ihrer Bank hoch (DKB, Hanseatic Bank oder Openbank)
+              Laden Sie eine CSV-Datei von Ihrer Bank hoch (DKB, Openbank, PayPal) oder ein PDF (Hanseatic Bank)
             </p>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>CSV-Upload</CardTitle>
+            <CardTitle>Datei-Upload</CardTitle>
             <CardDescription>
-              Unterstützte Formate: DKB, Hanseatic Bank, Openbank, PayPal
+              CSV: DKB, Openbank, PayPal | PDF: Hanseatic Bank Kontoauszug
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="file">CSV-Datei</Label>
+                <Label htmlFor="file">Datei auswählen</Label>
                 <Input
                   id="file"
                   type="file"
-                  accept=".csv"
+                  accept=".csv,.pdf"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Wählen Sie einen CSV-Export von Ihrer Bank aus
+                  CSV-Datei oder PDF-Kontoauszug (Hanseatic Bank)
                 </p>
               </div>
 

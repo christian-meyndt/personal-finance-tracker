@@ -11,6 +11,7 @@ from app.db import get_db
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.services.csv_parsers import ALL_PARSERS
+from app.services.csv_parsers.hanseatic_pdf import HanseaticPDFParser
 from app.services.paypal import PayPalService
 from app.services.categorization import CategorizationService
 

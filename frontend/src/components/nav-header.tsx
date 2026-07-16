@@ -23,6 +23,9 @@ export function NavHeader() {
               <Link href="/categories" className="text-muted-foreground hover:text-foreground">
                 Kategorien
               </Link>
+              <Link href="/rules" className="text-muted-foreground hover:text-foreground">
+                Regeln
+              </Link>
               <Link href="/budgets" className="text-muted-foreground hover:text-foreground">
                 Budgets
               </Link>
