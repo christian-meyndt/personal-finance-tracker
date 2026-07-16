@@ -6,29 +6,38 @@ A self-hosted personal finance tracking web application built with Python FastAP
 
 - 📊 Multi-account tracking (checking, savings, credit, PayPal)
 - 💰 All amounts in cents - no float precision issues
-- 🏷️ Automatic categorization with customizable rules
-- 📈 Budget tracking per category
+- 🏷️ Automatic categorization with customizable rules + AI fallback
+- 📈 Budget tracking per category with visual progress
 - 🔐 JWT authentication with bcrypt password hashing
-- 📥 CSV import - DKB, Hanseatic Bank, Openbank
-- 🔄 PayPal API sync
+- 📥 CSV import - DKB, Hanseatic Bank, Openbank, PayPal
+- 📄 PDF import - Hanseatic Bank statements
+- 🔄 PayPal API sync with custom date ranges
 - 🎨 Next.js frontend with shadcn/ui
-- 🤖 AI categorization with Anthropic Claude (Phase 6)
-- 📊 Analytics and charts (Phase 7-8)
+- 🤖 AI categorization with Anthropic Claude Haiku
+- 📊 Interactive analytics charts (Recharts)
+- 💾 CSV export with filtering
+- 🇩🇪 Full German UI
+- 🔍 Transaction search, pagination, and transfer filtering
 
 ## Current Status
 
-**✅ Phase 1-5 Complete!**
+**✅ All Phases Complete!**
 
-Working features:
 - ✅ FastAPI backend with JWT auth
-- ✅ Next.js frontend with authentication
-- ✅ CSV import for 3 banks (DKB, Hanseatic, Openbank)
-- ✅ PayPal API integration
-- ✅ Transaction list UI
-- ✅ Deduplication (import_hash)
-- ✅ Navigation between pages
-
-**🚧 Phase 6 Next:** Categorization (rule engine + AI fallback)
+- ✅ Next.js 16 frontend with React 19
+- ✅ CSV import for 3 banks (DKB, Hanseatic, Openbank) + PayPal CSV
+- ✅ PDF import for Hanseatic Bank statements
+- ✅ PayPal API integration with custom date ranges
+- ✅ Categorization engine (rule-based + AI fallback)
+- ✅ Categorization rules management UI
+- ✅ Dashboard with financial summaries
+- ✅ Budget tracking with visual progress bars
+- ✅ Interactive analytics charts (line, pie, bar)
+- ✅ Transaction pagination and search
+- ✅ Transfer filtering
+- ✅ CSV export with date/account/category filters
+- ✅ Settings page
+- ✅ Full German translation
 
 ## Quick Start
 
@@ -75,13 +84,15 @@ npm run dev
 - **JWT** - Stateless authentication (7-day tokens)
 - **Bcrypt** - Password hashing
 - **SQLite** - Embedded database (upgradeable to PostgreSQL)
+- **Anthropic SDK** - AI categorization (Claude Haiku 4.5)
 
 ### Frontend
-- **Next.js 14** - React framework with App Router
+- **Next.js 16** - React framework with App Router
+- **React 19** - UI library
 - **TypeScript** - Type safety
 - **shadcn/ui** - Component library
 - **Tailwind CSS** - Styling
-- **Recharts** - Data visualization (Phase 8)
+- **Recharts** - Interactive data visualization
 
 ## Architecture
 
@@ -89,10 +100,14 @@ npm run dev
 personal-finance-tracker/
 ├── backend/              # FastAPI application
 │   ├── app/
-│   │   ├── api/         # Route handlers
+│   │   ├── api/         # Route handlers (transactions, import, analytics, export)
 │   │   ├── models/      # SQLAlchemy models (separated by entity)
 │   │   ├── schemas/     # Pydantic schemas
-│   │   ├── services/    # Business logic, CSV parsers, PayPal
+│   │   ├── services/    # Business logic
+│   │   │   ├── csv_parsers/  # Bank-specific parsers (DKB, Hanseatic, Openbank, PayPal)
+│   │   │   ├── categorization.py  # Rule engine + AI fallback
+│   │   │   ├── analytics.py       # Financial summaries
+│   │   │   └── paypal.py          # PayPal API integration
 │   │   ├── auth.py      # JWT utilities (dual: Bearer + Cookie)
 │   │   ├── config.py    # Settings
 │   │   └── main.py      # FastAPI app
@@ -100,8 +115,8 @@ personal-finance-tracker/
 │   └── test_data/       # Sample CSV files
 └── frontend/            # Next.js application
     ├── src/
-    │   ├── app/         # Pages (App Router)
-    │   ├── components/  # UI components
+    │   ├── app/         # Pages (dashboard, analytics, transactions, etc.)
+    │   ├── components/  # UI components (shadcn/ui)
     │   └── middleware.ts # Auth middleware
     └── public/
 ```
@@ -132,14 +147,29 @@ All endpoints prefixed with `/api/v1/`
 
 ### Resources (All Protected)
 - `GET/POST /accounts` - Account management
-- `GET /transactions` - List transactions (with pagination)
+- `GET /transactions` - List transactions (with pagination, search, filters)
+- `GET /transactions/count` - Transaction count with filters
 - `GET/POST /categories` - Category management
 - `GET/POST /budgets` - Budget management
 - `GET/POST/DELETE /rules` - Categorization rules
 
 ### Import
 - `POST /import/csv` - Upload CSV file (auto-detects bank format)
+- `POST /import/pdf` - Upload PDF bank statement (Hanseatic)
 - `POST /import/paypal` - Sync PayPal transactions (requires credentials)
+
+### Analytics
+- `GET /analytics/summary` - Financial summary (income, expenses, net)
+- `GET /analytics/by-category` - Spending breakdown by category
+- `GET /analytics/monthly-trend` - Monthly income/expense trends
+- `GET /analytics/budget-progress` - Budget vs actual spending
+
+### Export
+- `GET /export/transactions/csv` - Export transactions as CSV (with date/account/category filters)
+
+### Categorization
+- `POST /transactions/{id}/categorize` - Categorize single transaction
+- `POST /transactions/categorize-all` - Auto-categorize all uncategorized
 
 Full API documentation at http://localhost:8000/docs
 
@@ -147,9 +177,11 @@ Full API documentation at http://localhost:8000/docs
 
 | Bank | Country | Format | Status |
 |------|---------|--------|--------|
-| DKB (Deutsche Kreditbank) | 🇩🇪 Germany | UTF-8-sig, semicolon, DD.MM.YYYY | ✅ |
-| Hanseatic Bank | 🇩🇪 Germany | UTF-8, semicolon, DD.MM.YYYY | ✅ |
-| Openbank | 🇪🇸 Spain | Auto-detect, flexible dates | ✅ |
+| DKB (Deutsche Kreditbank) | 🇩🇪 Germany | CSV (UTF-8-sig, semicolon, DD.MM.YYYY) | ✅ |
+| Hanseatic Bank | 🇩🇪 Germany | CSV (UTF-8, semicolon, DD.MM.YYYY) | ✅ |
+| Hanseatic Bank | 🇩🇪 Germany | PDF bank statements | ✅ |
+| Openbank | 🇪🇸 Spain | CSV (auto-detect, flexible dates) | ✅ |
+| PayPal | 🌍 Global | CSV export | ✅ |
 | PayPal | 🌍 Global | API integration (OAuth2) | ✅ |
 
 ## Configuration
@@ -205,7 +237,7 @@ Re-import the same files - should see "0 imported, 5 skipped" for each
 
 ## Development Phases
 
-### ✅ Phase 1: Backend Foundation (Complete)
+### ✅ Phase 1: Backend Foundation
 - FastAPI project structure
 - SQLAlchemy 2.0 models (6 models, separated files)
 - Alembic migrations
@@ -213,58 +245,61 @@ Re-import the same files - should see "0 imported, 5 skipped" for each
 - All API endpoints
 - Seed data (11 categories, 17 rules)
 
-### ✅ Phase 2: Frontend Setup (Complete)
-- Next.js 14 with App Router
+### ✅ Phase 2: Frontend Setup
+- Next.js with App Router
 - shadcn/ui components
 - Authentication (dual: Bearer + Cookie)
 - Login/logout flow
 - Middleware for protected routes
 
-### ✅ Phase 3: DKB Parser + UI (Complete)
+### ✅ Phase 3: DKB Parser + UI
 - DKB CSV parser (German format)
 - Transaction list UI
 - Import page with file upload
 - Auto-detection for bank format
 - Navigation component
 
-### ✅ Phase 4: Multi-Bank Support (Complete)
+### ✅ Phase 4: Multi-Bank Support
 - Hanseatic Bank parser
 - Openbank parser
 - Auto-detection for all 3 banks
-- Tested end-to-end with all formats
 
-### ✅ Phase 5: PayPal Integration (Complete)
+### ✅ Phase 5: PayPal Integration
 - PayPal OAuth2 authentication
 - PayPal Reporting API integration
-- Sync endpoint with date range
+- Sync endpoint with custom date range
 - UI button for PayPal sync
-- Results display with auto-redirect
 
-### 🚧 Phase 6: Categorization (In Progress)
-- Rule-based categorization engine
-- Run rules on import (CSV and PayPal)
-- AI categorization with Anthropic Claude Haiku
-- Auto-create rules from AI suggestions
+### ✅ Phase 6: Categorization
+- Rule-based categorization engine (contains, starts_with, exact, regex)
+- Auto-categorize on import (CSV and PayPal)
+- AI fallback with Anthropic Claude Haiku 4.5
 - Category management UI
 
-### 📋 Phase 7: Dashboard (Planned)
-- Dashboard with summary cards
-- Budget tracking page
-- Monthly spending overview
-- Category breakdown
+### ✅ Phase 7: Dashboard + Budget Tracking
+- Dashboard with summary cards (income, expenses, net)
+- Top spending categories with progress bars
+- Budget tracking with visual progress
+- Over-budget warnings
 
-### 📋 Phase 8: Analytics (Planned)
-- Charts with Recharts
-- Spending trends
-- Income vs expenses
-- Category analysis
+### ✅ Phase 8: Analytics Charts
+- Monthly trend line chart (income vs expenses)
+- Category spending pie chart
+- Budget vs actual bar chart
+- Interactive tooltips and legends
 
-### 📋 Phase 9: Settings (Planned)
-- Account management
-- Category editor
-- Rule management
-- CSV export
-- User settings
+### ✅ Phase 9: Settings + Export
+- Settings page with account/category/rule overview
+- CSV export with date range and account/category filters
+- German column headers in export
+
+### Post-Phase Enhancements
+- Full German translation of the entire UI
+- PayPal CSV parser (no business account needed)
+- Hanseatic PDF bank statement parser
+- Transfer filtering for transactions
+- Categorization rules management page
+- Server-side transaction pagination and search
 
 ## How Import Works
 
@@ -291,9 +326,10 @@ Re-import the same files - should see "0 imported, 5 skipped" for each
 - ✅ Full data ownership
 - ✅ Easy to extend
 - ✅ Multi-user household support
-- ✅ Automatic transaction import (CSV + PayPal)
-- 🚧 Smart categorization (rule-based + AI)
-- 📋 Beautiful, responsive UI with charts
+- ✅ Automatic transaction import (CSV + PDF + PayPal API)
+- ✅ Smart categorization (rule-based + AI)
+- ✅ Beautiful, responsive UI with interactive charts
+- ✅ Full German translation
 
 ## License
 
@@ -301,4 +337,4 @@ MIT License - This is a personal project, feel free to fork and modify.
 
 ---
 
-**Built with FastAPI + Next.js 14 + SQLAlchemy 2.0 + shadcn/ui**
+**Built with FastAPI + Next.js 16 + React 19 + SQLAlchemy 2.0 + shadcn/ui + Recharts**
