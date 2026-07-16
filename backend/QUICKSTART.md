@@ -105,12 +105,13 @@ DATABASE_URL=sqlite:///./finance.db
 SECRET_KEY=change-this-in-production
 ADMIN_USER=admin
 ADMIN_PASSWORD=admin123
-```
 
-For Phase 2+ features:
-```bash
+# PayPal API sync (optional)
 PAYPAL_CLIENT_ID=your-paypal-client-id
 PAYPAL_CLIENT_SECRET=your-paypal-secret
+PAYPAL_ENV=sandbox  # or 'live'
+
+# AI categorization (optional)
 ANTHROPIC_API_KEY=your-anthropic-key
 ```
 
@@ -173,27 +174,22 @@ All endpoints prefixed with `/api/v1/`
 | `/health` | GET | No | Health check |
 | `/auth/login` | POST | No | Get JWT token |
 | `/auth/me` | GET | Yes | Current user |
-| `/accounts` | GET | Yes | List accounts |
-| `/accounts` | POST | Yes | Create account |
-| `/transactions` | GET | Yes | List transactions |
+| `/accounts` | GET/POST | Yes | List/create accounts |
+| `/transactions` | GET | Yes | List transactions (paginated) |
+| `/transactions/count` | GET | Yes | Transaction count |
 | `/transactions/{id}` | PATCH | Yes | Update transaction |
-| `/categories` | GET | Yes | List categories |
-| `/budgets` | GET | Yes | List budgets |
-| `/rules` | GET | Yes | List rules |
+| `/categories` | GET/POST | Yes | List/create categories |
+| `/budgets` | GET/POST | Yes | List/create budgets |
+| `/rules` | GET/POST/DELETE | Yes | Manage categorization rules |
+| `/import/csv` | POST | Yes | Import CSV file |
+| `/import/pdf` | POST | Yes | Import PDF statement |
+| `/import/paypal` | POST | Yes | Sync PayPal transactions |
+| `/analytics/summary` | GET | Yes | Financial summary |
+| `/export/transactions/csv` | GET | Yes | Export as CSV |
 
 **Protected** = Requires `Authorization: Bearer <token>` header
 
-## Next Steps
-
-1. ✅ Server running? Check http://localhost:8000/health
-2. ✅ Can login? Test with curl or Swagger UI
-3. ✅ Tests passing? Run `./test_api.sh`
-4. 📖 Read `README.md` for detailed documentation
-5. 🚀 Ready for Phase 2? Wait for user confirmation
-
 ## Need Help?
 
-- Check `README.md` for detailed docs
-- View `PHASE1_COMPLETE.md` for implementation details
-- See `PROJECT_STATUS.md` for overall project status
+- Check `README.md` for detailed API and schema docs
 - API docs always available at http://localhost:8000/docs

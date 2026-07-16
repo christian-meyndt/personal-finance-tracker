@@ -10,6 +10,12 @@ FastAPI-based backend for the Personal Finance Tracker application.
 - **Database Models**: Users, Accounts, Transactions, Categories, Budgets, Category Rules
 - **Multi-user support** with bcrypt password hashing
 - **Pre-seeded data**: Default categories and categorization rules for German merchants
+- **Multi-bank CSV import**: DKB, Hanseatic, Openbank, PayPal
+- **PDF import**: Hanseatic Bank statements
+- **PayPal API sync**: OAuth2-based transaction sync
+- **Auto-categorization**: Rule engine + AI fallback (Claude Haiku 4.5)
+- **Analytics**: Financial summaries, category breakdowns, monthly trends
+- **CSV export**: Filtered transaction export with German headers
 
 ## Quick Start
 
@@ -56,8 +62,10 @@ The API will be available at:
 All endpoints are prefixed with `/api/v1/` and protected routes require a JWT bearer token.
 
 ### Authentication
-- `POST /auth/login` - Login with username/password, returns JWT token
-- `GET /auth/me` - Get current user info (protected)
+- `POST /auth/login` - Login with form data (sets httpOnly cookie)
+- `POST /auth/login/json` - Login with JSON (for API clients)
+- `POST /auth/logout` - Logout (clears cookie)
+- `GET /auth/me` - Get current user info
 
 ### Accounts
 - `GET /accounts` - List all accounts
@@ -65,9 +73,12 @@ All endpoints are prefixed with `/api/v1/` and protected routes require a JWT be
 - `PATCH /accounts/{id}` - Update account
 
 ### Transactions
-- `GET /transactions` - List transactions (with filters: account_id, category_id, date_from, date_to, search)
+- `GET /transactions` - List transactions (with pagination, filters: account_id, category_id, date_from, date_to, search)
+- `GET /transactions/count` - Transaction count with filters
 - `GET /transactions/uncategorized` - List uncategorized transactions
-- `PATCH /transactions/{id}` - Update transaction (e.g., assign category)
+- `POST /transactions/{id}/categorize` - Categorize single transaction
+- `POST /transactions/categorize-all` - Auto-categorize all uncategorized
+- `PATCH /transactions/{id}` - Update transaction
 
 ### Categories
 - `GET /categories` - List all categories
@@ -81,6 +92,21 @@ All endpoints are prefixed with `/api/v1/` and protected routes require a JWT be
 - `GET /rules` - List all rules
 - `POST /rules` - Create new rule
 - `DELETE /rules/{id}` - Delete rule
+
+### Import
+- `POST /import/csv` - Upload CSV file (auto-detects bank format)
+- `POST /import/pdf` - Upload PDF bank statement (Hanseatic)
+- `POST /import/paypal` - Sync PayPal transactions via API
+
+### Analytics
+- `GET /analytics/summary` - Financial summary (income, expenses, net)
+- `GET /analytics/by-category` - Spending breakdown by category
+- `GET /analytics/monthly-trend` - Monthly income/expense trends
+- `GET /analytics/budget-progress` - Budget vs actual spending
+- `GET /analytics/recent` - Recent transactions
+
+### Export
+- `GET /export/transactions/csv` - Export as CSV (filters: start_date, end_date, account_id, category_id)
 
 ## Database Schema
 
@@ -96,7 +122,7 @@ All endpoints are prefixed with `/api/v1/` and protected routes require a JWT be
 - All amounts stored as **cents** (integers) to avoid float precision issues
 - Negative amounts = expenses, positive = income
 - Unique `import_hash` for deduplication
-- Source tracking: csv_dkb, csv_hanseatic, csv_openbank, paypal, manual
+- Source tracking: csv_dkb, csv_hanseatic, csv_openbank, csv_paypal, paypal, manual
 
 ### Categories
 - Hierarchical structure with parent_id for subcategories
@@ -108,7 +134,7 @@ All endpoints are prefixed with `/api/v1/` and protected routes require a JWT be
 
 ### Category Rules
 - Pattern matching for auto-categorization
-- Match types: contains, starts_with, exact
+- Match types: contains, starts_with, exact, regex
 
 ## Database Migrations
 
@@ -164,10 +190,18 @@ backend/
 │   │   ├── transactions.py
 │   │   ├── categories.py
 │   │   ├── budgets.py
-│   │   └── rules.py
+│   │   ├── rules.py
+│   │   ├── import_api.py      # CSV import
+│   │   ├── import_api_pdf.py  # PDF import
+│   │   ├── analytics.py       # Analytics endpoints
+│   │   └── export.py          # CSV export
 │   ├── models/           # SQLAlchemy ORM models
 │   ├── schemas/          # Pydantic request/response schemas
-│   ├── services/         # Business logic (CSV parsers, categorizer, PayPal)
+│   ├── services/         # Business logic
+│   │   ├── csv_parsers/       # Bank-specific parsers (DKB, Hanseatic, Openbank, PayPal, PDF)
+│   │   ├── categorization.py  # Rule engine + AI fallback
+│   │   ├── analytics.py       # Financial summaries
+│   │   └── paypal.py          # PayPal API integration
 │   ├── auth.py           # JWT and password hashing utilities
 │   ├── config.py         # Settings from environment variables
 │   ├── db.py             # Database session management
@@ -188,14 +222,19 @@ All functions use Python type hints for better IDE support and code clarity.
 
 FastAPI is async-first. All route handlers and database operations support async/await.
 
-## Next Steps (Phase 2+)
+## Environment Variables
 
-Phase 1 is now complete with:
-- ✅ FastAPI project structure
-- ✅ SQLAlchemy 2.0 with all models
-- ✅ Alembic migrations
-- ✅ JWT authentication endpoint
-- ✅ All API endpoints scaffolded
-- ✅ Database seeded with default categories and rules
+```bash
+DATABASE_URL=sqlite:///./finance.db
+SECRET_KEY=your-secret-key-here-min-32-chars
+ADMIN_USER=admin
+ADMIN_PASSWORD=changeme
 
-**Ready for Phase 2**: CSV import functionality, PayPal integration, and AI categorization.
+# PayPal API (optional)
+PAYPAL_CLIENT_ID=your-paypal-client-id
+PAYPAL_CLIENT_SECRET=your-paypal-secret
+PAYPAL_ENV=sandbox  # or 'live'
+
+# AI categorization (optional)
+ANTHROPIC_API_KEY=your-anthropic-key
+```
